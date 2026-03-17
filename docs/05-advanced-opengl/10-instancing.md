@@ -11,13 +11,13 @@ OpenGL でオブジェクトを描画するたびに `glDrawArrays` や `glDrawE
 ```
 1回のドローコールで起こること:
 
-CPU 側 │ GPU 側
+CPU 側                          │  GPU 側
 ────────────────────────────────┼──────────────────────
-ユニフォーム設定 │
-バッファバインド │
-ステート検証 │
-ドライバがコマンドバッファ構築 │
-  ─── コマンド送信 ──────────▶ │ 描画実行
+ユニフォーム設定                │
+バッファバインド                │
+ステート検証                    │
+ドライバがコマンドバッファ構築  │
+  ─── コマンド送信 ──────────▶  │  描画実行
                                 │
 ```
 
@@ -26,14 +26,14 @@ CPU 側 │ GPU 側
 ```
 通常描画 (1000個のオブジェクト):
   for (int i = 0; i < 1000; i++) {
-      setUniform(model[i]); // ← 毎回 CPU→GPU 通信
-      glDrawArrays(...); // ← 毎回ドローコール
+      setUniform(model[i]);   // ← 毎回 CPU→GPU 通信
+      glDrawArrays(...);      // ← 毎回ドローコール
   }
   合計: 1000回のドローコール → CPUがボトルネック
 
 インスタンシング:
-  setupInstanceData(); // ← 1回だけ
-  glDrawArraysInstanced(..., 1000); // ← 1回のドローコール
+  setupInstanceData();          // ← 1回だけ
+  glDrawArraysInstanced(..., 1000);  // ← 1回のドローコール
   合計: 1回のドローコール → GPU が効率的に処理
 ```
 
@@ -69,7 +69,7 @@ glDrawElementsInstanced(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0, instanceCo
 layout (location = 0) in vec2 aPos;
 layout (location = 1) in vec3 aColor;
 
-uniform vec2 offsets[100]; // 各インスタンスのオフセット
+uniform vec2 offsets[100];  // 各インスタンスのオフセット
 
 out vec3 fColor;
 
@@ -128,9 +128,9 @@ glVertexAttribDivisor(index, divisor);
 | N | Nインスタンスごとに属性が進む |
 
 ```
-divisor=0 (頂点属性): divisor=1 (インスタンス属性):
- Instance0: v0→d[0] v1→d[1] Instance0: v0→d[0] v1→d[0]
- Instance1: v0→d[0] v1→d[1] Instance1: v0→d[1] v1→d[1]
+divisor=0 (頂点属性):          divisor=1 (インスタンス属性):
+ Instance0: v0→d[0] v1→d[1]   Instance0: v0→d[0] v1→d[0]
+ Instance1: v0→d[0] v1→d[1]   Instance1: v0→d[1] v1→d[1]
 ```
 
 ### セットアップコード
@@ -145,7 +145,7 @@ glBufferData(GL_ARRAY_BUFFER, sizeof(vec2) * 100, &translations[0], GL_STATIC_DR
 // 頂点属性として設定（location = 2）
 glEnableVertexAttribArray(2);
 glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
-glVertexAttribDivisor(2, 1); // ← インスタンスごとに更新
+glVertexAttribDivisor(2, 1);  // ← インスタンスごとに更新
 ```
 
 対応するシェーダー：
@@ -154,7 +154,7 @@ glVertexAttribDivisor(2, 1); // ← インスタンスごとに更新
 #version 330 core
 layout (location = 0) in vec2 aPos;
 layout (location = 1) in vec3 aColor;
-layout (location = 2) in vec2 aOffset; // インスタンス属性
+layout (location = 2) in vec2 aOffset;  // インスタンス属性
 
 out vec3 fColor;
 
@@ -197,7 +197,7 @@ glVertexAttribDivisor(6, 1);
 layout (location = 0) in vec3 aPos;
 layout (location = 1) in vec3 aNormal;
 layout (location = 2) in vec2 aTexCoords;
-layout (location = 3) in mat4 aInstanceMatrix; // location 3,4,5,6 を自動消費
+layout (location = 3) in mat4 aInstanceMatrix;  // location 3,4,5,6 を自動消費
 
 uniform mat4 view;
 uniform mat4 projection;
@@ -233,7 +233,7 @@ for (unsigned int i = 0; i < amount; i++) {
     float displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
     float x = sin(angle) * radius + displacement;
     displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
-    float y = displacement * 0.4f; // y軸は薄く
+    float y = displacement * 0.4f;  // y軸は薄く
     displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
     float z = cos(angle) * radius + displacement;
     model = glm::translate(model, glm::vec3(x, y, z));
@@ -311,7 +311,7 @@ for (unsigned int i = 0; i < rock.meshes.size(); i++) {
 ```cpp
 glEnableVertexAttribArray(2);
 glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
-______________________________; // インスタンスごとに更新
+______________________________;  // インスタンスごとに更新
 ```
 
 <details><summary> 解答</summary>
@@ -425,9 +425,9 @@ void main() {
     gl_Position = vec4(aPos + aOffset, 0.0, 1.0);
     // インスタンスIDから色を生成（0～99のインスタンスを想定）
     fColor = vec3(
-        float(______) / 100.0, // R: IDに比例
+        float(______) / 100.0,       // R: IDに比例
         1.0 - float(______) / 100.0, // G: IDに反比例
-        0.5 // B: 固定
+        0.5                           // B: 固定
     );
 }
 ```

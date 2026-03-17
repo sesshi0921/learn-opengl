@@ -10,11 +10,11 @@
 
 ```
 画像ファイル（PNG/JPG）
-      ↓ stb_image で読み込み
+      ↓  stb_image で読み込み
    CPU メモリ（pixel data）
-      ↓ glTexImage2D で転送
+      ↓  glTexImage2D で転送
    GPU テクスチャオブジェクト
-      ↓ シェーダーでサンプリング
+      ↓  シェーダーでサンプリング
    フラグメントの色
 ```
 
@@ -28,8 +28,8 @@
 テクスチャ座標系
 
 (0,1)──────(1,1)
-  │ 画像 │
-  │ │
+  │  画像   │
+  │         │
 (0,0)──────(1,0)
  ↑ (s=0,t=0) が左下（OpenGL の場合）
 ```
@@ -38,11 +38,11 @@
 
 ```cpp
 float vertices[] = {
-    // 位置 // UV
-     0.5f, 0.5f, 0.0f, 1.0f, 1.0f, // 右上
-     0.5f, -0.5f, 0.0f, 1.0f, 0.0f, // 右下
-    -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, // 左下
-    -0.5f, 0.5f, 0.0f, 0.0f, 1.0f // 左上
+    // 位置               // UV
+     0.5f,  0.5f, 0.0f,  1.0f, 1.0f,  // 右上
+     0.5f, -0.5f, 0.0f,  1.0f, 0.0f,  // 右下
+    -0.5f, -0.5f, 0.0f,  0.0f, 0.0f,  // 左下
+    -0.5f,  0.5f, 0.0f,  0.0f, 1.0f   // 左上
 };
 ```
 
@@ -93,9 +93,9 @@ glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 ```
 オリジナル: 512×512
   ↓ 1/2
-ミップ 1: 256×256
+ミップ 1:   256×256
   ↓ 1/2
-ミップ 2: 128×128
+ミップ 2:   128×128
   ↓ 1/2
     ...
 ```
@@ -125,7 +125,7 @@ glGenerateMipmap(GL_TEXTURE_2D);
 
 // テクスチャ読み込み
 int width, height, nrChannels;
-stbi_set_flip_vertically_on_load(true); // OpenGL は Y 軸が逆なので反転が必要
+stbi_set_flip_vertically_on_load(true);  // OpenGL は Y 軸が逆なので反転が必要
 unsigned char* data = stbi_load("container.jpg", &width, &height, &nrChannels, 0);
 ```
 
@@ -152,16 +152,16 @@ glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 // 画像を読み込んで GPU に転送
 if (data) {
     glTexImage2D(
-        GL_TEXTURE_2D, // テクスチャのターゲット
-        0, // ミップマップレベル（0 = ベース）
-        GL_RGB, // GPU で使う内部フォーマット
-        width, height, // テクスチャのサイズ
-        0, // 常に 0（レガシー）
-        GL_RGB, // 入力データのフォーマット
-        GL_UNSIGNED_BYTE, // 入力データの型
-        data // 画像データ
+        GL_TEXTURE_2D,      // テクスチャのターゲット
+        0,                   // ミップマップレベル（0 = ベース）
+        GL_RGB,              // GPU で使う内部フォーマット
+        width, height,       // テクスチャのサイズ
+        0,                   // 常に 0（レガシー）
+        GL_RGB,              // 入力データのフォーマット
+        GL_UNSIGNED_BYTE,    // 入力データの型
+        data                 // 画像データ
     );
-    glGenerateMipmap(GL_TEXTURE_2D); // ミップマップ生成
+    glGenerateMipmap(GL_TEXTURE_2D);  // ミップマップ生成
 } else {
     std::cerr << "テクスチャ読み込み失敗" << std::endl;
 }
@@ -195,7 +195,7 @@ void main() {
 in vec2 TexCoord;
 out vec4 FragColor;
 
-uniform sampler2D ourTexture; // テクスチャサンプラー
+uniform sampler2D ourTexture;  // テクスチャサンプラー
 
 void main() {
     FragColor = texture(ourTexture, TexCoord);
@@ -204,7 +204,7 @@ void main() {
 
 ```cpp
 // CPU 側：テクスチャユニットをバインド
-glActiveTexture(GL_TEXTURE0); // テクスチャユニット 0 を選択
+glActiveTexture(GL_TEXTURE0);   // テクスチャユニット 0 を選択
 glBindTexture(GL_TEXTURE_2D, texture);
 
 // サンプラーにユニット番号を設定
@@ -226,7 +226,7 @@ void main() {
     FragColor = mix(
         texture(texture1, TexCoord),
         texture(texture2, TexCoord),
-        mixValue // 0=texture1のみ、1=texture2のみ
+        mixValue  // 0=texture1のみ、1=texture2のみ
     );
 }
 ```
@@ -276,7 +276,7 @@ glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
 
 // 読み込み後
 glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-【 ④ 】(GL_TEXTURE_2D); // ミップマップ生成
+【 ④ 】(GL_TEXTURE_2D);  // ミップマップ生成
 ```
 
 <details>

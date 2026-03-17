@@ -10,15 +10,15 @@ Modelクラスは前章のMeshクラスを**束ねる上位クラス**です。1
 
 ```
 Model
-├── meshes[] ... Meshオブジェクトの配列
+├── meshes[]          ... Meshオブジェクトの配列
 ├── textures_loaded[] ... 読み込み済みテクスチャの配列（キャッシュ）
-├── directory ... モデルファイルのディレクトリパス
+├── directory         ... モデルファイルのディレクトリパス
 │
-├── loadModel() ... Assimpでファイル読み込み
-├── processNode() ... ノードツリーの再帰走査
-├── processMesh() ... aiMesh → Mesh変換
+├── loadModel()       ... Assimpでファイル読み込み
+├── processNode()     ... ノードツリーの再帰走査
+├── processMesh()     ... aiMesh → Mesh変換
 ├── loadMaterialTextures() ... マテリアルからテクスチャ読み込み
-└── Draw() ... 全メッシュの描画
+└── Draw()            ... 全メッシュの描画
 ```
 
 ### 処理の流れ
@@ -28,15 +28,15 @@ Model("path/to/model.obj")
   │
   └─→ loadModel()
         │
-        ├─→ Assimp::Importer.ReadFile() ... ファイル読み込み
-        │ └─→ aiScene取得
+        ├─→ Assimp::Importer.ReadFile()   ... ファイル読み込み
+        │     └─→ aiScene取得
         │
-        └─→ processNode(rootNode, scene) ... 再帰走査開始
+        └─→ processNode(rootNode, scene)   ... 再帰走査開始
               │
-              ├─→ processMesh(mesh, scene) ... 各メッシュを変換
-              │ ├─→ 頂点データ抽出
-              │ ├─→ インデックス抽出
-              │ └─→ loadMaterialTextures() ... テクスチャ読み込み
+              ├─→ processMesh(mesh, scene)  ... 各メッシュを変換
+              │     ├─→ 頂点データ抽出
+              │     ├─→ インデックス抽出
+              │     └─→ loadMaterialTextures()  ... テクスチャ読み込み
               │
               └─→ processNode(child, scene) ... 子ノードへ再帰
 ```
@@ -99,8 +99,8 @@ void Model::loadModel(const std::string &path)
     Assimp::Importer importer;
     const aiScene* scene = importer.ReadFile(
         path,
-        aiProcess_Triangulate |
-        aiProcess_FlipUVs |
+        aiProcess_Triangulate      |
+        aiProcess_FlipUVs          |
         aiProcess_GenSmoothNormals |
         aiProcess_CalcTangentSpace
     );
@@ -166,13 +166,13 @@ void Model::processNode(aiNode *node, const aiScene *scene)
 processNode(RootNode)
 ├── RootNodeのメッシュを処理 (0個)
 ├── processNode(Body)
-│ ├── Bodyのメッシュを処理 (1個 → meshes[0])
-│ ├── processNode(LeftArm)
-│ │ └── LeftArmのメッシュを処理 (1個 → meshes[1])
-│ └── processNode(RightArm)
-│ └── RightArmのメッシュを処理 (1個 → meshes[2])
+│   ├── Bodyのメッシュを処理 (1個 → meshes[0])
+│   ├── processNode(LeftArm)
+│   │   └── LeftArmのメッシュを処理 (1個 → meshes[1])
+│   └── processNode(RightArm)
+│       └── RightArmのメッシュを処理 (1個 → meshes[2])
 ├── processNode(Head)
-│ └── Headのメッシュを処理 (2個 → meshes[3], meshes[4])
+│   └── Headのメッシュを処理 (2個 → meshes[3], meshes[4])
 └── processNode(Weapon)
     └── Weaponのメッシュを処理 (1個 → meshes[5])
 
@@ -259,7 +259,7 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
 
         // ノーマルマップ
         // ※ OBJ/MTL の bump マップは Assimp が aiTextureType_HEIGHT として扱うため、
-        // ノーマルマップにこのタイプを使用する（aiTextureType_NORMALS ではない）
+        //    ノーマルマップにこのタイプを使用する（aiTextureType_NORMALS ではない）
         std::vector<Texture> normalMaps = loadMaterialTextures(
             material, aiTextureType_HEIGHT, "texture_normal");
         textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
@@ -277,13 +277,13 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
 ### データ変換の対応関係
 
 ```
-Assimp (aiMesh) → OpenGL (Mesh)
+Assimp (aiMesh)              →    OpenGL (Mesh)
 ──────────────────────────────────────────────────
-mesh->mVertices[i] → vertex.Position
-mesh->mNormals[i] → vertex.Normal
-mesh->mTextureCoords[0][i] → vertex.TexCoords
-mesh->mFaces[i].mIndices[j] → indices[]
-scene->mMaterials[index] → textures[]
+mesh->mVertices[i]           →    vertex.Position
+mesh->mNormals[i]            →    vertex.Normal
+mesh->mTextureCoords[0][i]   →    vertex.TexCoords
+mesh->mFaces[i].mIndices[j]  →    indices[]
+scene->mMaterials[index]     →    textures[]
 ```
 
 ---
@@ -318,11 +318,11 @@ std::vector<Texture> Model::loadMaterialTextures(
         if (!skip)
         {
             Texture texture;
-            texture.id = TextureFromFile(str.C_Str(), directory);
+            texture.id   = TextureFromFile(str.C_Str(), directory);
             texture.type = typeName;
             texture.path = std::string(str.C_Str());
             textures.push_back(texture);
-            textures_loaded.push_back(texture); // キャッシュに追加
+            textures_loaded.push_back(texture);  // キャッシュに追加
         }
     }
 
@@ -341,7 +341,7 @@ std::vector<Texture> Model::loadMaterialTextures(
   → "wall.png" → textures_loaded で発見！ → スキップ（再利用）
   → "metal.png" → 未読み込み → TextureFromFile() → textures_loaded に追加
 
-textures_loaded = [wall.png, floor.png, metal.png] ← 3回のロードで済む
+textures_loaded = [wall.png, floor.png, metal.png]  ← 3回のロードで済む
                    （キャッシュなしなら4回）
 ```
 

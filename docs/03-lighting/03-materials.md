@@ -11,16 +11,16 @@
 前のチャプターでは、1つの `objectColor` と固定の係数（`ambientStrength = 0.1` など）だけでライティングを計算していました。しかし現実世界では、金属、木、プラスチック、ゴムなどの素材ごとに光の反射特性は大きく異なります。
 
 ```
-    同じ光
-    │ │ │
-    ▼ ▼ ▼
+      同じ光
+    │         │         │
+    ▼         ▼         ▼
 ┌──────┐ ┌──────┐ ┌──────┐
-│ 金属 │ │木材 │ │ ゴム │
-│ │ │ │ │ │
+│ 金属 │ │木材  │ │ ゴム │
+│      │ │      │ │      │
 │鋭い光沢│ │やや光沢│ │光沢なし│
 └──────┘ └──────┘ └──────┘
-shininess shininess shininess
- = 128 = 16 = 4
+shininess  shininess  shininess
+ = 128      = 16       = 4
 ```
 
 マテリアルシステムでは、各素材に対して以下の4つの属性を定義します：
@@ -61,20 +61,20 @@ uniform Material material;
 
 ```glsl
 // 前: 定数と objectColor で計算
-vec3 ambient = ambientStrength * lightColor;
-vec3 diffuse = diff * lightColor;
+vec3 ambient  = ambientStrength * lightColor;
+vec3 diffuse  = diff * lightColor;
 vec3 specular = specularStrength * spec * lightColor;
-vec3 result = (ambient + diffuse + specular) * objectColor;
+vec3 result   = (ambient + diffuse + specular) * objectColor;
 ```
 
 マテリアル導入後：
 
 ```glsl
 // 後: マテリアル構造体を使用
-vec3 ambient = lightColor * material.ambient;
-vec3 diffuse = lightColor * (diff * material.diffuse);
+vec3 ambient  = lightColor * material.ambient;
+vec3 diffuse  = lightColor * (diff * material.diffuse);
 vec3 specular = lightColor * (spec * material.specular);
-vec3 result = ambient + diffuse + specular;
+vec3 result   = ambient + diffuse + specular;
 ```
 
 `objectColor` は不要になりました。物体の色はマテリアルの `ambient` と `diffuse` で表現されます。
@@ -117,8 +117,8 @@ GLSL struct の各メンバーは個別に設定します：
 
 ```cpp
 // 金 (Gold) マテリアルの設定
-objectShader.setVec3("material.ambient", 0.24725f, 0.1995f, 0.0745f);
-objectShader.setVec3("material.diffuse", 0.75164f, 0.60648f, 0.22648f);
+objectShader.setVec3("material.ambient",  0.24725f, 0.1995f, 0.0745f);
+objectShader.setVec3("material.diffuse",  0.75164f, 0.60648f, 0.22648f);
 objectShader.setVec3("material.specular", 0.628281f, 0.555802f, 0.366065f);
 objectShader.setFloat("material.shininess", 51.2f);
 ```
@@ -149,14 +149,14 @@ MaterialData jade = {
 
 // マテリアルを切り替える関数
 void setMaterial(Shader& shader, const MaterialData& mat) {
-    shader.setVec3("material.ambient", mat.ambient);
-    shader.setVec3("material.diffuse", mat.diffuse);
-    shader.setVec3("material.specular", mat.specular);
+    shader.setVec3("material.ambient",   mat.ambient);
+    shader.setVec3("material.diffuse",   mat.diffuse);
+    shader.setVec3("material.specular",  mat.specular);
     shader.setFloat("material.shininess", mat.shininess);
 }
 
 // 使用例
-setMaterial(objectShader, gold); // 金に設定
+setMaterial(objectShader, gold);  // 金に設定
 // setMaterial(objectShader, jade); // 翡翠に切り替え
 ```
 
@@ -178,9 +178,9 @@ setMaterial(objectShader, gold); // 金に設定
 struct Light {
     vec3 position;
 
-    vec3 ambient; // 環境光の強度・色
-    vec3 diffuse; // 拡散光の強度・色
-    vec3 specular; // 鏡面光の強度・色
+    vec3 ambient;   // 環境光の強度・色
+    vec3 diffuse;   // 拡散光の強度・色
+    vec3 specular;  // 鏡面光の強度・色
 };
 
 uniform Light light;
@@ -190,25 +190,25 @@ uniform Light light;
 
 ```glsl
 // lightColor の代わりに light.xxx を使用
-vec3 ambient = light.ambient * material.ambient;
-vec3 diffuse = light.diffuse * (diff * material.diffuse);
+vec3 ambient  = light.ambient * material.ambient;
+vec3 diffuse  = light.diffuse * (diff * material.diffuse);
 vec3 specular = light.specular * (spec * material.specular);
-vec3 result = ambient + diffuse + specular;
+vec3 result   = ambient + diffuse + specular;
 ```
 
 ### 典型的な Light の設定
 
 ```cpp
 objectShader.setVec3("light.position", lightPos);
-objectShader.setVec3("light.ambient", 0.2f, 0.2f, 0.2f); // 弱い環境光
-objectShader.setVec3("light.diffuse", 0.5f, 0.5f, 0.5f); // 中程度の拡散光
+objectShader.setVec3("light.ambient",  0.2f, 0.2f, 0.2f); // 弱い環境光
+objectShader.setVec3("light.diffuse",  0.5f, 0.5f, 0.5f); // 中程度の拡散光
 objectShader.setVec3("light.specular", 1.0f, 1.0f, 1.0f); // 全力のハイライト
 ```
 
 ```
 光の強度設定:
-ambient (0.2, 0.2, 0.2) ████░░░░░░ 20%
-diffuse (0.5, 0.5, 0.5) █████░░░░░ 50%
+ambient  (0.2, 0.2, 0.2) ████░░░░░░ 20%
+diffuse  (0.5, 0.5, 0.5) █████░░░░░ 50%
 specular (1.0, 1.0, 1.0) ██████████ 100%
 ```
 
@@ -232,8 +232,8 @@ glm::vec3 diffuseColor = lightColor * glm::vec3(0.5f);
 // ambient はさらに暗く
 glm::vec3 ambientColor = diffuseColor * glm::vec3(0.2f);
 
-objectShader.setVec3("light.ambient", ambientColor);
-objectShader.setVec3("light.diffuse", diffuseColor);
+objectShader.setVec3("light.ambient",  ambientColor);
+objectShader.setVec3("light.diffuse",  diffuseColor);
 objectShader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
 ```
 
@@ -322,15 +322,15 @@ void main()
 objectShader.use();
 
 // マテリアルの設定（例: 金）
-objectShader.setVec3("material.ambient", 0.24725f, 0.1995f, 0.0745f);
-objectShader.setVec3("material.diffuse", 0.75164f, 0.60648f, 0.22648f);
+objectShader.setVec3("material.ambient",  0.24725f, 0.1995f, 0.0745f);
+objectShader.setVec3("material.diffuse",  0.75164f, 0.60648f, 0.22648f);
 objectShader.setVec3("material.specular", 0.628281f, 0.555802f, 0.366065f);
 objectShader.setFloat("material.shininess", 51.2f);
 
 // 光源の設定
 objectShader.setVec3("light.position", lightPos);
-objectShader.setVec3("light.ambient", 0.2f, 0.2f, 0.2f);
-objectShader.setVec3("light.diffuse", 0.5f, 0.5f, 0.5f);
+objectShader.setVec3("light.ambient",  0.2f, 0.2f, 0.2f);
+objectShader.setVec3("light.diffuse",  0.5f, 0.5f, 0.5f);
 objectShader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
 
 // カメラ位置
@@ -363,10 +363,10 @@ objectShader.setVec3("viewPos", camera.Position);
 
 ```glsl
 struct Material {
-    vec3 ______; // 環境光での反射色
-    vec3 ______; // 拡散光での反射色
-    vec3 ______; // 鏡面反射の色
-    float ______; // 鏡面反射の鋭さ
+    vec3 ______;     // 環境光での反射色
+    vec3 ______;     // 拡散光での反射色
+    vec3 ______;     // 鏡面反射の色
+    float ______;    // 鏡面反射の鋭さ
 };
 ```
 
@@ -374,10 +374,10 @@ struct Material {
 
 ```glsl
 struct Material {
-    vec3 ambient; // 環境光での反射色
-    vec3 diffuse; // 拡散光での反射色
-    vec3 specular; // 鏡面反射の色
-    float shininess; // 鏡面反射の鋭さ
+    vec3 ambient;     // 環境光での反射色
+    vec3 diffuse;     // 拡散光での反射色
+    vec3 specular;    // 鏡面反射の色
+    float shininess;  // 鏡面反射の鋭さ
 };
 ```
 
@@ -406,8 +406,8 @@ struct Material {
 <details><summary> 解答</summary>
 
 ```cpp
-objectShader.setVec3("material.ambient", 0.19125f, 0.0735f, 0.0225f);
-objectShader.setVec3("material.diffuse", 0.7038f, 0.27048f, 0.0828f);
+objectShader.setVec3("material.ambient",  0.19125f, 0.0735f, 0.0225f);
+objectShader.setVec3("material.diffuse",  0.7038f, 0.27048f, 0.0828f);
 objectShader.setVec3("material.specular", 0.256777f, 0.137622f, 0.086014f);
 objectShader.setFloat("material.shininess", 12.8f);
 ```
@@ -422,7 +422,7 @@ Light の ambient が `(0.2, 0.2, 0.2)`、Material の ambient が `(0.25, 0.207
 
 ```
 ambient = light.ambient * material.ambient
-        = (0.2 × 0.25, 0.2 × 0.20725, 0.2 × 0.20725)
+        = (0.2 × 0.25,  0.2 × 0.20725,  0.2 × 0.20725)
         = (0.05, 0.04145, 0.04145)
 ```
 

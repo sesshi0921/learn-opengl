@@ -9,9 +9,9 @@
 ```
 必要なもの：
   1. 頂点データ（CPU 側の float 配列）
-  2. VBO → GPU にデータを転送するバッファ
-  3. VAO → 頂点属性の設定を記憶するオブジェクト
-  4. 頂点シェーダー → 頂点の位置を決める
+  2. VBO  → GPU にデータを転送するバッファ
+  3. VAO  → 頂点属性の設定を記憶するオブジェクト
+  4. 頂点シェーダー  → 頂点の位置を決める
   5. フラグメントシェーダー → 色を決める
   6. シェーダープログラム → 2 つのシェーダーをリンクしたもの
   7. glDrawArrays → 実際に描画する命令
@@ -24,9 +24,9 @@
 ```cpp
 // 三角形の 3 頂点（NDC 座標）
 float vertices[] = {
-    -0.5f, -0.5f, 0.0f, // 左下
-     0.5f, -0.5f, 0.0f, // 右下
-     0.0f, 0.5f, 0.0f // 上
+    -0.5f, -0.5f, 0.0f,  // 左下
+     0.5f, -0.5f, 0.0f,  // 右下
+     0.0f,  0.5f, 0.0f   // 上
 };
 ```
 
@@ -34,7 +34,7 @@ float vertices[] = {
       (0, 0.5)
         △
        / \
-      / \
+      /   \
 (-0.5,-0.5)─(0.5,-0.5)
 ```
 
@@ -72,14 +72,14 @@ glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
 // 3. 頂点属性を設定（VAO に記録される）
 glVertexAttribPointer(
-    0, // 属性インデックス（シェーダーの location と対応）
-    3, // 成分数（x, y, z の 3 つ）
-    GL_FLOAT, // データ型
-    GL_FALSE, // 正規化しない
-    3 * sizeof(float), // ストライド（1 頂点のバイト数）
-    (void*)0 // オフセット（先頭から 0 バイト）
+    0,                  // 属性インデックス（シェーダーの location と対応）
+    3,                  // 成分数（x, y, z の 3 つ）
+    GL_FLOAT,           // データ型
+    GL_FALSE,           // 正規化しない
+    3 * sizeof(float),  // ストライド（1 頂点のバイト数）
+    (void*)0            // オフセット（先頭から 0 バイト）
 );
-glEnableVertexAttribArray(0); // 属性 0 を有効化
+glEnableVertexAttribArray(0);  // 属性 0 を有効化
 
 // 4. バインドを解除
 glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -105,7 +105,7 @@ const char* fragmentShaderSource = R"(
     #version 330 core
     out vec4 FragColor;
     void main() {
-        FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f); // オレンジ
+        FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);  // オレンジ
     }
 )";
 ```
@@ -173,9 +173,9 @@ while (!glfwWindowShouldClose(window)) {
 
     // 描画！
     glDrawArrays(
-        GL_TRIANGLES, // プリミティブの種類
-        0, // 開始インデックス
-        3 // 頂点数
+        GL_TRIANGLES,  // プリミティブの種類
+        0,             // 開始インデックス
+        3              // 頂点数
     );
 
     glfwSwapBuffers(window);
@@ -192,16 +192,16 @@ while (!glfwWindowShouldClose(window)) {
 ```cpp
 // 四角形の 4 頂点
 float vertices[] = {
-     0.5f, 0.5f, 0.0f, // 右上 [0]
-     0.5f, -0.5f, 0.0f, // 右下 [1]
-    -0.5f, -0.5f, 0.0f, // 左下 [2]
-    -0.5f, 0.5f, 0.0f // 左上 [3]
+     0.5f,  0.5f, 0.0f,  // 右上  [0]
+     0.5f, -0.5f, 0.0f,  // 右下  [1]
+    -0.5f, -0.5f, 0.0f,  // 左下  [2]
+    -0.5f,  0.5f, 0.0f   // 左上  [3]
 };
 
 // インデックス（三角形 2 つで四角形）
 unsigned int indices[] = {
-    0, 1, 3, // 三角形 1（右上・右下・左上）
-    1, 2, 3 // 三角形 2（右下・左下・左上）
+    0, 1, 3,  // 三角形 1（右上・右下・左上）
+    1, 2, 3   // 三角形 2（右下・左下・左上）
 };
 
 unsigned int EBO;
@@ -220,8 +220,8 @@ glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 デバッグに便利：
 
 ```cpp
-glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // ワイヤーフレーム
-glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // 通常（デフォルト）
+glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);   // ワイヤーフレーム
+glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);   // 通常（デフォルト）
 ```
 
 ---
@@ -287,8 +287,8 @@ glEnableVertexAttribArray(【 ⑥ 】);
 
 ```cpp
 glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-// ↑ ↑ ↑ ↑ ↑ ↑
-// A B C D E F
+//                   ↑  ↑     ↑         ↑           ↑                ↑
+//                   A  B     C         D           E                F
 ```
 
 各引数 A〜F の意味を答えなさい。
@@ -368,7 +368,7 @@ void main() {
 【 ④ 】 vec4 FragColor;
 
 void main() {
-    FragColor = vec4(1.0f, 0.5f, 0.2f, 【 ⑤ 】); // 不透明なオレンジ
+    FragColor = vec4(1.0f, 0.5f, 0.2f, 【 ⑤ 】);  // 不透明なオレンジ
 }
 ```
 

@@ -12,13 +12,13 @@
 方向ベクトルによるサンプリング:
 
          ┌──────────┐
-         │ +Y │ (上面)
-         │ (Top) │
+         │   +Y     │  (上面)
+         │  (Top)   │
     ┌────┼──────────┼────┬──────────┐
-    │ -X │ +Z │ +X │ -Z │
-    │Left│ (Front) │Right│ (Back) │
+    │ -X │   +Z     │ +X │   -Z     │
+    │Left│ (Front)  │Right│ (Back)  │
     └────┼──────────┼────┴──────────┘
-         │ -Y │ (下面)
+         │   -Y     │  (下面)
          │ (Bottom) │
          └──────────┘
 
@@ -93,12 +93,12 @@ unsigned int loadCubemap(std::vector<std::string> faces) {
 
 ```cpp
 std::vector<std::string> faces {
-    "right.jpg", // +X
-    "left.jpg", // -X
-    "top.jpg", // +Y
-    "bottom.jpg", // -Y
-    "front.jpg", // +Z
-    "back.jpg" // -Z
+    "right.jpg",   // +X
+    "left.jpg",    // -X
+    "top.jpg",     // +Y
+    "bottom.jpg",  // -Y
+    "front.jpg",   // +Z
+    "back.jpg"     // -Z
 };
 unsigned int cubemapTexture = loadCubemap(faces);
 ```
@@ -116,18 +116,18 @@ unsigned int cubemapTexture = loadCubemap(faces);
 ```cpp
 float skyboxVertices[] = {
     // 位置のみ（36頂点 = 6面 × 2三角形 × 3頂点）
-    -1.0f, 1.0f, -1.0f, -1.0f, -1.0f, -1.0f, 1.0f, -1.0f, -1.0f,
-     1.0f, -1.0f, -1.0f, 1.0f, 1.0f, -1.0f, -1.0f, 1.0f, -1.0f,
-    -1.0f, -1.0f, 1.0f, -1.0f, -1.0f, -1.0f, -1.0f, 1.0f, -1.0f,
-    -1.0f, 1.0f, -1.0f, -1.0f, 1.0f, 1.0f, -1.0f, -1.0f, 1.0f,
-     1.0f, -1.0f, -1.0f, 1.0f, -1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
-     1.0f, 1.0f, 1.0f, 1.0f, 1.0f, -1.0f, 1.0f, -1.0f, -1.0f,
-    -1.0f, -1.0f, 1.0f, -1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
-     1.0f, 1.0f, 1.0f, 1.0f, -1.0f, 1.0f, -1.0f, -1.0f, 1.0f,
-    -1.0f, 1.0f, -1.0f, 1.0f, 1.0f, -1.0f, 1.0f, 1.0f, 1.0f,
-     1.0f, 1.0f, 1.0f, -1.0f, 1.0f, 1.0f, -1.0f, 1.0f, -1.0f,
-    -1.0f, -1.0f, -1.0f, -1.0f, -1.0f, 1.0f, 1.0f, -1.0f, -1.0f,
-     1.0f, -1.0f, -1.0f, -1.0f, -1.0f, 1.0f, 1.0f, -1.0f, 1.0f
+    -1.0f,  1.0f, -1.0f,   -1.0f, -1.0f, -1.0f,    1.0f, -1.0f, -1.0f,
+     1.0f, -1.0f, -1.0f,    1.0f,  1.0f, -1.0f,   -1.0f,  1.0f, -1.0f,
+    -1.0f, -1.0f,  1.0f,   -1.0f, -1.0f, -1.0f,   -1.0f,  1.0f, -1.0f,
+    -1.0f,  1.0f, -1.0f,   -1.0f,  1.0f,  1.0f,   -1.0f, -1.0f,  1.0f,
+     1.0f, -1.0f, -1.0f,    1.0f, -1.0f,  1.0f,    1.0f,  1.0f,  1.0f,
+     1.0f,  1.0f,  1.0f,    1.0f,  1.0f, -1.0f,    1.0f, -1.0f, -1.0f,
+    -1.0f, -1.0f,  1.0f,   -1.0f,  1.0f,  1.0f,    1.0f,  1.0f,  1.0f,
+     1.0f,  1.0f,  1.0f,    1.0f, -1.0f,  1.0f,   -1.0f, -1.0f,  1.0f,
+    -1.0f,  1.0f, -1.0f,    1.0f,  1.0f, -1.0f,    1.0f,  1.0f,  1.0f,
+     1.0f,  1.0f,  1.0f,   -1.0f,  1.0f,  1.0f,   -1.0f,  1.0f, -1.0f,
+    -1.0f, -1.0f, -1.0f,   -1.0f, -1.0f,  1.0f,    1.0f, -1.0f, -1.0f,
+     1.0f, -1.0f, -1.0f,   -1.0f, -1.0f,  1.0f,    1.0f, -1.0f,  1.0f
 };
 ```
 
@@ -144,9 +144,9 @@ uniform mat4 projection;
 uniform mat4 view;
 
 void main() {
-    TexCoords = aPos; // 頂点位置がそのまま方向ベクトル
+    TexCoords = aPos;  // 頂点位置がそのまま方向ベクトル
     vec4 pos = projection * view * vec4(aPos, 1.0);
-    gl_Position = pos.xyww; // 深度値を常に最大に
+    gl_Position = pos.xyww;  //  深度値を常に最大に
 }
 ```
 
@@ -174,19 +174,19 @@ glm::mat4 view = glm::mat4(glm::mat3(camera.GetViewMatrix()));
 **なぜ？** `mat4` を `mat3` に変換すると平行移動成分（4列目）が消えます。スカイボックスはカメラがどこに移動しても常に同じ距離に見えるべきだからです。回転だけを残すことで「無限遠」の背景を表現します。
 
 ```
-mat4 のビュー行列: mat3 にすると:
-┌─────────────────┐ ┌──────────┐
-│ R00 R01 R02 Tx │ │ R00 R01 R02 │ ← 回転のみ
-│ R10 R11 R12 Ty │ → │ R10 R11 R12 │
-│ R20 R21 R22 Tz │ │ R20 R21 R22 │
-│ 0 0 0 1 │ └──────────┘
-└─────────────────┘ Tx, Ty, Tz が消える！
+mat4 のビュー行列:           mat3 にすると:
+┌─────────────────┐         ┌──────────┐
+│ R00 R01 R02 Tx  │         │ R00 R01 R02 │  ← 回転のみ
+│ R10 R11 R12 Ty  │   →     │ R10 R11 R12 │
+│ R20 R21 R22 Tz  │         │ R20 R21 R22 │
+│  0   0   0   1  │         └──────────┘
+└─────────────────┘         Tx, Ty, Tz が消える！
 ```
 
 #### 2. 深度値を最大にするトリック
 
 ```glsl
-gl_Position = pos.xyww; // z を w で置換 → z/w = w/w = 1.0
+gl_Position = pos.xyww;  // z を w で置換 → z/w = w/w = 1.0
 ```
 
 パースペクティブ除算後に `z/w = w/w = 1.0` となり、深度値が常に最大値になります。これによりスカイボックスは他のすべてのオブジェクトの **奥** に描画されます。
@@ -194,7 +194,7 @@ gl_Position = pos.xyww; // z を w で置換 → z/w = w/w = 1.0
 #### 3. 深度関数の変更
 
 ```cpp
-glDepthFunc(GL_LEQUAL); // ≦ に変更（デフォルトは GL_LESS）
+glDepthFunc(GL_LEQUAL);  // ≦ に変更（デフォルトは GL_LESS）
 ```
 
 深度バッファの初期値は 1.0 で、スカイボックスの深度も 1.0 です。`GL_LESS` では `1.0 < 1.0` が false なので描画されません。`GL_LEQUAL`（≦）にすることで `1.0 <= 1.0` が true となり描画されます。
@@ -226,12 +226,12 @@ glDepthFunc(GL_LESS); // 元に戻す
 オブジェクトの表面が周囲の環境を鏡のように映す効果です。
 
 ```
-        視線ベクトル I 法線 N
-            ↘ ↑
-             ↘ │
+        視線ベクトル I        法線 N
+            ↘               ↑
+             ↘              │
     ──────────●──────────── 表面
              ↗
-            ↗ 反射ベクトル R
+            ↗  反射ベクトル R
            ↗
     R = reflect(I, N)
 ```
@@ -267,8 +267,8 @@ uniform vec3 cameraPos;
 uniform samplerCube skybox;
 
 void main() {
-    vec3 I = normalize(Position - cameraPos); // 視線ベクトル
-    vec3 R = reflect(I, normalize(Normal)); // 反射ベクトル
+    vec3 I = normalize(Position - cameraPos);  // 視線ベクトル
+    vec3 R = reflect(I, normalize(Normal));     // 反射ベクトル
     FragColor = vec4(texture(skybox, R).rgb, 1.0);
 }
 ```
@@ -280,11 +280,11 @@ void main() {
 光がガラスや水のような媒質に入ると方向が変わります。これがスネルの法則に基づく屈折です。
 
 ```
-    入射光 I 法線 N
-        ↘ ↑
-         ↘ │ 媒質1（空気: η₁=1.0）
+    入射光 I        法線 N
+        ↘           ↑
+         ↘          │  媒質1（空気: η₁=1.0）
     ──────●──────────── 境界面
-          ↘ 媒質2（ガラス: η₂=1.52）
+          ↘            媒質2（ガラス: η₂=1.52）
            ↘
             R = refract(I, N, η₁/η₂)
 ```

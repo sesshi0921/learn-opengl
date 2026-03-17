@@ -9,11 +9,11 @@
 現実世界と同様に、各光源の寄与を**足し合わせて**最終色を求めます（重ね合わせの原理）。
 
 ```
- 太陽 → 寄与A ─┐
+   太陽 → 寄与A ─┐
 💡 電球1 → 寄与B ─┤
 💡 電球2 → 寄与C ─┼→ 最終色 = A + B + C + D + E
 💡 電球3 → 寄与D ─┤
- 懐中電灯 → 寄与E┘
+   懐中電灯 → 寄与E┘
 ```
 
 今まで学んだ `CalcDirLight`、`CalcPointLight`、`CalcSpotLight` の結果を**すべて足せばよい**のです。
@@ -22,10 +22,10 @@
 
 ```
 main()
-├── CalcDirLight(dirLight) → vec3
+├── CalcDirLight(dirLight)           → vec3
 ├── for (i < NR_POINT_LIGHTS)
-│ CalcPointLight(pointLights[i]) → vec3 ×4
-├── CalcSpotLight(spotLight) → vec3
+│     CalcPointLight(pointLights[i]) → vec3  ×4
+├── CalcSpotLight(spotLight)         → vec3
 └── FragColor = vec4(全部足す, 1.0)
 ```
 
@@ -56,41 +56,41 @@ struct DirLight {
 };
 
 struct PointLight {
-    vec3 position;
+    vec3  position;
     float constant;
     float linear;
     float quadratic;
-    vec3 ambient;
-    vec3 diffuse;
-    vec3 specular;
+    vec3  ambient;
+    vec3  diffuse;
+    vec3  specular;
 };
 
 struct SpotLight {
-    vec3 position;
-    vec3 direction;
+    vec3  position;
+    vec3  direction;
     float cutOff;
     float outerCutOff;
     float constant;
     float linear;
     float quadratic;
-    vec3 ambient;
-    vec3 diffuse;
-    vec3 specular;
+    vec3  ambient;
+    vec3  diffuse;
+    vec3  specular;
 };
 
 struct Material {
     sampler2D diffuse;
     sampler2D specular;
-    float shininess;
+    float     shininess;
 };
 
 #define NR_POINT_LIGHTS 4
 
-uniform DirLight dirLight;
+uniform DirLight   dirLight;
 uniform PointLight pointLights[NR_POINT_LIGHTS];
-uniform SpotLight spotLight;
-uniform Material material;
-uniform vec3 viewPos;
+uniform SpotLight  spotLight;
+uniform Material   material;
+uniform vec3       viewPos;
 ```
 
 `#define NR_POINT_LIGHTS 4` で点光源の数を定義し、配列サイズとループ回数を一致させます。
@@ -104,13 +104,13 @@ uniform vec3 viewPos;
 ```glsl
 vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir)
 {
-    vec3 lightDir = normalize(-light.direction);
-    float diff = max(dot(normal, lightDir), 0.0);
+    vec3 lightDir   = normalize(-light.direction);
+    float diff      = max(dot(normal, lightDir), 0.0);
     vec3 reflectDir = reflect(-lightDir, normal);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+    float spec      = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
 
-    vec3 ambient = light.ambient * vec3(texture(material.diffuse, TexCoords));
-    vec3 diffuse = light.diffuse * diff * vec3(texture(material.diffuse, TexCoords));
+    vec3 ambient  = light.ambient  * vec3(texture(material.diffuse, TexCoords));
+    vec3 diffuse  = light.diffuse  * diff * vec3(texture(material.diffuse, TexCoords));
     vec3 specular = light.specular * spec * vec3(texture(material.specular, TexCoords));
     return (ambient + diffuse + specular);
 }
@@ -121,18 +121,18 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir)
 ```glsl
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 {
-    vec3 lightDir = normalize(light.position - fragPos);
-    float diff = max(dot(normal, lightDir), 0.0);
+    vec3 lightDir   = normalize(light.position - fragPos);
+    float diff      = max(dot(normal, lightDir), 0.0);
     vec3 reflectDir = reflect(-lightDir, normal);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+    float spec      = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
 
-    float distance = length(light.position - fragPos);
+    float distance    = length(light.position - fragPos);
     float attenuation = 1.0 / (light.constant
                               + light.linear * distance
                               + light.quadratic * distance * distance);
 
-    vec3 ambient = light.ambient * vec3(texture(material.diffuse, TexCoords));
-    vec3 diffuse = light.diffuse * diff * vec3(texture(material.diffuse, TexCoords));
+    vec3 ambient  = light.ambient  * vec3(texture(material.diffuse, TexCoords));
+    vec3 diffuse  = light.diffuse  * diff * vec3(texture(material.diffuse, TexCoords));
     vec3 specular = light.specular * spec * vec3(texture(material.specular, TexCoords));
     return (ambient + diffuse + specular) * attenuation;
 }
@@ -143,22 +143,22 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 ```glsl
 vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 {
-    vec3 lightDir = normalize(light.position - fragPos);
-    float diff = max(dot(normal, lightDir), 0.0);
+    vec3 lightDir   = normalize(light.position - fragPos);
+    float diff      = max(dot(normal, lightDir), 0.0);
     vec3 reflectDir = reflect(-lightDir, normal);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+    float spec      = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
 
-    float distance = length(light.position - fragPos);
+    float distance    = length(light.position - fragPos);
     float attenuation = 1.0 / (light.constant
                               + light.linear * distance
                               + light.quadratic * distance * distance);
 
-    float theta = dot(lightDir, normalize(-light.direction));
-    float epsilon = light.cutOff - light.outerCutOff;
+    float theta     = dot(lightDir, normalize(-light.direction));
+    float epsilon   = light.cutOff - light.outerCutOff;
     float intensity = clamp((theta - light.outerCutOff) / epsilon, 0.0, 1.0);
 
-    vec3 ambient = light.ambient * vec3(texture(material.diffuse, TexCoords));
-    vec3 diffuse = light.diffuse * diff * vec3(texture(material.diffuse, TexCoords));
+    vec3 ambient  = light.ambient  * vec3(texture(material.diffuse, TexCoords));
+    vec3 diffuse  = light.diffuse  * diff * vec3(texture(material.diffuse, TexCoords));
     vec3 specular = light.specular * spec * vec3(texture(material.specular, TexCoords));
     return (ambient + diffuse + specular) * attenuation * intensity;
 }
@@ -176,7 +176,7 @@ out vec4 FragColor;
 
 void main()
 {
-    vec3 norm = normalize(Normal);
+    vec3 norm    = normalize(Normal);
     vec3 viewDir = normalize(viewPos - FragPos);
 
     // フェーズ1: 平行光源
@@ -202,39 +202,39 @@ void main()
 ```cpp
 // ===== 平行光源 =====
 lightingShader.setVec3("dirLight.direction", -0.2f, -1.0f, -0.3f);
-lightingShader.setVec3("dirLight.ambient", 0.05f, 0.05f, 0.05f);
-lightingShader.setVec3("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
-lightingShader.setVec3("dirLight.specular", 0.5f, 0.5f, 0.5f);
+lightingShader.setVec3("dirLight.ambient",    0.05f, 0.05f, 0.05f);
+lightingShader.setVec3("dirLight.diffuse",    0.4f,  0.4f,  0.4f);
+lightingShader.setVec3("dirLight.specular",   0.5f,  0.5f,  0.5f);
 
 // ===== 点光源（ヘルパー関数でループ）=====
 glm::vec3 pointLightPositions[] = {
-    glm::vec3( 0.7f, 0.2f, 2.0f),
+    glm::vec3( 0.7f,  0.2f,  2.0f),
     glm::vec3( 2.3f, -3.3f, -4.0f),
-    glm::vec3(-4.0f, 2.0f, -12.0f),
-    glm::vec3( 0.0f, 0.0f, -3.0f)
+    glm::vec3(-4.0f,  2.0f, -12.0f),
+    glm::vec3( 0.0f,  0.0f, -3.0f)
 };
 
 for (int i = 0; i < 4; i++) {
     std::string base = "pointLights[" + std::to_string(i) + "]";
-    lightingShader.setVec3(base + ".position", pointLightPositions[i]);
-    lightingShader.setVec3(base + ".ambient", 0.05f, 0.05f, 0.05f);
-    lightingShader.setVec3(base + ".diffuse", 0.8f, 0.8f, 0.8f);
-    lightingShader.setVec3(base + ".specular", 1.0f, 1.0f, 1.0f);
-    lightingShader.setFloat(base + ".constant", 1.0f);
-    lightingShader.setFloat(base + ".linear", 0.09f);
+    lightingShader.setVec3(base  + ".position",  pointLightPositions[i]);
+    lightingShader.setVec3(base  + ".ambient",   0.05f, 0.05f, 0.05f);
+    lightingShader.setVec3(base  + ".diffuse",   0.8f,  0.8f,  0.8f);
+    lightingShader.setVec3(base  + ".specular",  1.0f,  1.0f,  1.0f);
+    lightingShader.setFloat(base + ".constant",  1.0f);
+    lightingShader.setFloat(base + ".linear",    0.09f);
     lightingShader.setFloat(base + ".quadratic", 0.032f);
 }
 
 // ===== スポットライト（カメラ懐中電灯）=====
-lightingShader.setVec3("spotLight.position", camera.Position);
+lightingShader.setVec3("spotLight.position",  camera.Position);
 lightingShader.setVec3("spotLight.direction", camera.Front);
-lightingShader.setFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
+lightingShader.setFloat("spotLight.cutOff",      glm::cos(glm::radians(12.5f)));
 lightingShader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));
-lightingShader.setFloat("spotLight.constant", 1.0f);
-lightingShader.setFloat("spotLight.linear", 0.09f);
+lightingShader.setFloat("spotLight.constant",  1.0f);
+lightingShader.setFloat("spotLight.linear",    0.09f);
 lightingShader.setFloat("spotLight.quadratic", 0.032f);
-lightingShader.setVec3("spotLight.ambient", 0.0f, 0.0f, 0.0f);
-lightingShader.setVec3("spotLight.diffuse", 1.0f, 1.0f, 1.0f);
+lightingShader.setVec3("spotLight.ambient",  0.0f, 0.0f, 0.0f);
+lightingShader.setVec3("spotLight.diffuse",  1.0f, 1.0f, 1.0f);
 lightingShader.setVec3("spotLight.specular", 1.0f, 1.0f, 1.0f);
 ```
 
@@ -247,38 +247,38 @@ lightingShader.setVec3("spotLight.specular", 1.0f, 1.0f, 1.0f);
 ### 砂漠（Desert）
 
 ```cpp
-dirLight.ambient = vec3(0.3f, 0.24f, 0.14f);
-dirLight.diffuse = vec3(0.7f, 0.42f, 0.26f); // 暖色の太陽
-pointDiffuse = vec3(0.8f, 0.4f, 0.1f); // オレンジの電球
+dirLight.ambient  = vec3(0.3f, 0.24f, 0.14f);
+dirLight.diffuse  = vec3(0.7f, 0.42f, 0.26f);   // 暖色の太陽
+pointDiffuse      = vec3(0.8f, 0.4f,  0.1f);     // オレンジの電球
 ```
 
 ### 工場（Factory）
 
 ```cpp
-dirLight.ambient = vec3(0.05f, 0.05f, 0.1f);
-dirLight.diffuse = vec3(0.2f, 0.2f, 0.7f); // 寒色
-pointDiffuse = vec3(0.5f, 0.5f, 0.5f); // 白色蛍光灯
+dirLight.ambient  = vec3(0.05f, 0.05f, 0.1f);
+dirLight.diffuse  = vec3(0.2f,  0.2f,  0.7f);    // 寒色
+pointDiffuse      = vec3(0.5f,  0.5f,  0.5f);    // 白色蛍光灯
 ```
 
 ### ホラー（Horror）
 
 ```cpp
-dirLight.ambient = vec3(0.0f); // 環境光なし
-dirLight.diffuse = vec3(0.05f); // ほぼ暗闇
-pointDiffuse[0] = vec3(0.6f, 0.0f, 0.0f); // 赤い光が1つだけ
-pointDiffuse[1] = vec3(0.0f); // 残りは消灯
+dirLight.ambient  = vec3(0.0f);                   // 環境光なし
+dirLight.diffuse  = vec3(0.05f);                  // ほぼ暗闇
+pointDiffuse[0]   = vec3(0.6f, 0.0f, 0.0f);      // 赤い光が1つだけ
+pointDiffuse[1]   = vec3(0.0f);                   // 残りは消灯
 ```
 
 ### 生化学ラボ（Biochemical Lab）
 
 ```cpp
-dirLight.ambient = vec3(0.05f, 0.1f, 0.05f);
-dirLight.diffuse = vec3(0.1f, 0.4f, 0.1f); // 緑
-pointDiffuse = vec3(0.2f, 0.8f, 0.2f); // 毒々しい緑の蛍光灯
+dirLight.ambient  = vec3(0.05f, 0.1f,  0.05f);
+dirLight.diffuse  = vec3(0.1f,  0.4f,  0.1f);    // 緑
+pointDiffuse      = vec3(0.2f,  0.8f,  0.2f);    // 毒々しい緑の蛍光灯
 ```
 
 ```
-砂漠: 暖色オレンジ 工場: 💡寒色ブルー ホラー: 赤が点滅 ラボ: 毒々しい緑
+砂漠: 暖色オレンジ  工場: 💡寒色ブルー  ホラー: 赤が点滅  ラボ: 毒々しい緑
 ```
 
 ---
@@ -320,9 +320,9 @@ pointDiffuse = vec3(0.2f, 0.8f, 0.2f); // 毒々しい緑の蛍光灯
 ```glsl
 void main()
 {
-    vec3 norm = normalize(______);
+    vec3 norm    = normalize(______);
     vec3 viewDir = normalize(______ - FragPos);
-    vec3 result = CalcDirLight(______, norm, viewDir);
+    vec3 result  = CalcDirLight(______, norm, viewDir);
     for (int i = 0; i < ______; i++)
         result += CalcPointLight(______[i], norm, FragPos, viewDir);
     result += CalcSpotLight(______, norm, FragPos, viewDir);

@@ -9,17 +9,17 @@
 OpenGL は 1992 年、**Silicon Graphics Inc.（SGI）** によって公開されました。当時は高性能ワークステーション向けの API でしたが、現在では PC・モバイル・Web など幅広いプラットフォームで使われています。
 
 ```
-1992 年 OpenGL 1.0 リリース（SGI）
+1992 年  OpenGL 1.0 リリース（SGI）
    ↓
-2004 年 OpenGL 2.0（シェーダー言語 GLSL 導入）
+2004 年  OpenGL 2.0（シェーダー言語 GLSL 導入）
    ↓
-2008 年 OpenGL 3.0（コアプロファイル登場、古い機能を deprecated に）
+2008 年  OpenGL 3.0（コアプロファイル登場、古い機能を deprecated に）
    ↓
-2009 年 OpenGL 3.2（ジオメトリシェーダー）
+2009 年  OpenGL 3.2（ジオメトリシェーダー）
    ↓
-2010 年 OpenGL 4.0（テッセレーション）
+2010 年  OpenGL 4.0（テッセレーション）
    ↓
-2017 年 OpenGL 4.6（最新版、現在もメンテナンス中）
+2017 年  OpenGL 4.6（最新版、現在もメンテナンス中）
 ```
 
 > 💡 現在 OpenGL の仕様管理は **Khronos Group** が行っています。
@@ -83,13 +83,13 @@ OpenGL のすべての操作は **現在のコンテキスト（Context）** に
 ```
 OpenGL Context
 ┌──────────────────────────────────┐
-│ 現在バインドされているテクスチャ │
-│ 現在バインドされているシェーダー │
-│ 現在バインドされているバッファ │
-│ ビューポートの設定 │
-│ ブレンディング設定 │
-│ 深度テスト設定 │
-│ ...（数百の状態変数） │
+│ 現在バインドされているテクスチャ  │
+│ 現在バインドされているシェーダー  │
+│ 現在バインドされているバッファ    │
+│ ビューポートの設定               │
+│ ブレンディング設定               │
+│ 深度テスト設定                   │
+│ ...（数百の状態変数）            │
 └──────────────────────────────────┘
 ```
 
@@ -234,15 +234,15 @@ if (GL_ARB_extension_name) {
 ```cpp
 // ヒント：以下の関数を使う
 const GLubyte* version = glGetString(GL_VERSION);
-const GLubyte* vendor = glGetString(GL_VENDOR);
+const GLubyte* vendor  = glGetString(GL_VENDOR);
 const GLubyte* renderer = glGetString(GL_RENDERER);
 ```
 
 **期待される出力例：**
 ```
 OpenGL Version : 4.6.0 NVIDIA 528.49
-Vendor : NVIDIA Corporation
-Renderer : NVIDIA GeForce RTX 3070/PCIe/SSE2
+Vendor         : NVIDIA Corporation
+Renderer       : NVIDIA GeForce RTX 3070/PCIe/SSE2
 ```
 
 ---

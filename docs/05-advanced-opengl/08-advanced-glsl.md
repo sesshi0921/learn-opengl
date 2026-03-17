@@ -11,15 +11,15 @@ GLSL には、シェーダーステージ間でデータをやり取りするた
 ```
 パイプラインと組み込み変数の対応:
 
-  頂点シェーダー フラグメントシェーダー
-  ┌────────────────────┐ ┌────────────────────┐
-  │ 入力: │ │ 入力: │
-  │ gl_VertexID │ │ gl_FragCoord │
-  │ │ │ gl_FrontFacing │
-  │ 出力: │ ──→ │ │
-  │ gl_Position │ │ 出力: │
-  │ gl_PointSize │ │ gl_FragDepth │
-  └────────────────────┘ └────────────────────┘
+  頂点シェーダー                 フラグメントシェーダー
+  ┌────────────────────┐       ┌────────────────────┐
+  │ 入力:               │       │ 入力:               │
+  │   gl_VertexID       │       │   gl_FragCoord      │
+  │                     │       │   gl_FrontFacing    │
+  │ 出力:               │  ──→  │                     │
+  │   gl_Position       │       │ 出力:               │
+  │   gl_PointSize      │       │   gl_FragDepth      │
+  └────────────────────┘       └────────────────────┘
 ```
 
 ---
@@ -72,9 +72,9 @@ void main() {
 
 ```
   (0, height) ──── (width, height)
-    │ │
-    │ gl_FragCoord.xy │
-    │ │
+    │                    │
+    │  gl_FragCoord.xy   │
+    │                    │
   (0, 0) ──────── (width, 0)
 ```
 
@@ -132,12 +132,12 @@ layout (depth_greater) out float gl_FragDepth; // 元の値以上にのみ変更
 頂点シェーダーからフラグメントシェーダーに複数の変数を渡す際、`in/out` を1つずつ宣言する代わりに **ブロック** としてまとめることができます。
 
 ```glsl
-// 頂点シェーダー // フラグメントシェーダー
-out VS_OUT { in VS_OUT { // ブロック名は同じ
-    vec2 TexCoords; vec2 TexCoords;
-    vec3 FragPos; vec3 FragPos;
-    vec3 Normal; vec3 Normal;
-} vs_out; } fs_in; // インスタンス名は異なってOK
+// 頂点シェーダー                        // フラグメントシェーダー
+out VS_OUT {                          in VS_OUT {        // ブロック名は同じ
+    vec2 TexCoords;                       vec2 TexCoords;
+    vec3 FragPos;                         vec3 FragPos;
+    vec3 Normal;                          vec3 Normal;
+} vs_out;                             } fs_in;           // インスタンス名は異なってOK
 ```
 
 **ルール:** ブロック型名（`VS_OUT`）とメンバーの型・名・順序は一致必須。インスタンス名は異なってよい。
@@ -169,21 +169,21 @@ UBO を使えば、1つのバッファに uniform データを格納し、複数
 UBO の仕組み:
 
   ┌─────────────────────────┐
-  │ Uniform Buffer │
-  │ ┌───────────────────┐ │
-  │ │ projection (mat4) │ │ バインディングポイント 0
-  │ │ view (mat4) │ │ ──────────────┐
-  │ └───────────────────┘ │ │
-  └─────────────────────────┘ │
+  │    Uniform Buffer       │
+  │  ┌───────────────────┐  │
+  │  │ projection (mat4) │  │   バインディングポイント 0
+  │  │ view       (mat4) │  │ ──────────────┐
+  │  └───────────────────┘  │               │
+  └─────────────────────────┘               │
                                             ▼
                               ┌──────────────────────┐
-                              │ GL Binding Point 0 │
+                              │ GL Binding Point 0   │
                               └───┬──────┬──────┬───┘
-                                  │ │ │
-                                  ▼ ▼ ▼
+                                  │      │      │
+                                  ▼      ▼      ▼
                               ShaderA ShaderB ShaderC
-                              (block (block (block
-                               idx 0) idx 0) idx 0)
+                              (block  (block  (block
+                               idx 0)  idx 0)  idx 0)
 ```
 
 ### GLSL 側: uniform ブロック宣言
@@ -191,8 +191,8 @@ UBO の仕組み:
 ```glsl
 #version 330 core
 layout (std140) uniform Matrices {
-    mat4 projection; // オフセット: 0
-    mat4 view; // オフセット: 64
+    mat4 projection;  // オフセット: 0
+    mat4 view;        // オフセット: 64
 };
 // 合計: 128 bytes
 ```
@@ -216,12 +216,12 @@ layout (std140) uniform Matrices {
 
 ```glsl
 layout (std140) uniform ExampleBlock {
-    float value; // オフセット: 0 (サイズ 4, アライン 4)
-    vec3 vector; // オフセット: 16 (サイズ 12, アライン 16)
-    mat4 matrix; // オフセット: 32 (サイズ 64, アライン 16)
-    float values[3]; // オフセット: 96 (各 16 byte にパディング)
-    bool boolean; // オフセット: 144 (サイズ 4, アライン 4)
-    int integer; // オフセット: 148 (サイズ 4, アライン 4)
+    float value;      // オフセット: 0   (サイズ 4,  アライン 4)
+    vec3  vector;     // オフセット: 16  (サイズ 12, アライン 16)
+    mat4  matrix;     // オフセット: 32  (サイズ 64, アライン 16)
+    float values[3];  // オフセット: 96  (各 16 byte にパディング)
+    bool  boolean;    // オフセット: 144 (サイズ 4,  アライン 4)
+    int   integer;    // オフセット: 148 (サイズ 4,  アライン 4)
 };
 // 合計: 152 bytes
 ```
@@ -241,9 +241,9 @@ glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
 // ステップ2: バインディングポイントに紐づけ
 glBindBufferRange(GL_UNIFORM_BUFFER,
-                  0, // バインディングポイント
+                  0,                    // バインディングポイント
                   uboMatrices,
-                  0, // オフセット
+                  0,                    // オフセット
                   2 * sizeof(glm::mat4)); // サイズ
 
 // ステップ3: 各シェーダーの uniform ブロックをバインディングポイントに接続
@@ -280,8 +280,8 @@ shaderB.setMat4("model", modelB);
 ### 接続関係のまとめ図
 
 ```
-glUniformBlockBinding → シェーダーのブロック ←→ バインディングポイント
-glBindBufferBase/Range → UBO ←→ バインディングポイント
+glUniformBlockBinding  →  シェーダーのブロック ←→ バインディングポイント
+glBindBufferBase/Range →  UBO ←→ バインディングポイント
 
   Shader A: "Matrices" ─┐
   Shader B: "Matrices" ─┤── Binding Point 0 ── UBO (uboMatrices)
@@ -338,10 +338,10 @@ D. 深度バッファが読み取り専用になる
 
 ```glsl
 layout (std140) uniform LightBlock {
-    vec4 position; // オフセット: ?
-    vec3 color; // オフセット: ?
-    float intensity; // オフセット: ?
-    mat4 lightSpace; // オフセット: ?
+    vec4  position;    // オフセット: ?
+    vec3  color;       // オフセット: ?
+    float intensity;   // オフセット: ?
+    mat4  lightSpace;  // オフセット: ?
 };
 ```
 
@@ -361,10 +361,10 @@ layout (std140) uniform LightBlock {
 
 ```glsl
 layout (std140) uniform TestBlock {
-    float a; // 0
-    vec3 b; // ?
-    float c; // ?
-    bool flag; // ?
+    float a;       // 0
+    vec3  b;       // ?
+    float c;       // ?
+    bool  flag;    // ?
 };
 ```
 

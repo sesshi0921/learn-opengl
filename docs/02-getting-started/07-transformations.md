@@ -11,9 +11,9 @@
 
 ```
 変換の種類：
-  移動（Translation） → 位置を変える
-  回転（Rotation） → 向きを変える
-  スケール（Scale） → 大きさを変える
+  移動（Translation）   → 位置を変える
+  回転（Rotation）      → 向きを変える
+  スケール（Scale）     → 大きさを変える
   
 これらを 4×4 行列で表現する！
 ```
@@ -57,10 +57,10 @@ a × b = ベクトル a と b の両方に垂直なベクトル
 
 ```
 4×4 の単位行列（Identity Matrix）：
-┌1 0 0 0┐
-│0 1 0 0│
-│0 0 1 0│
-└0 0 0 1┘
+┌1  0  0  0┐
+│0  1  0  0│
+│0  0  1  0│
+└0  0  0  1┘
 
 任意のベクトルに単位行列を掛けても変化しない
 ```
@@ -72,10 +72,10 @@ a × b = ベクトル a と b の両方に垂直なベクトル
 ```
 移動行列（x方向に Tx、y方向に Ty、z方向に Tz 移動）：
 
-┌1 0 0 Tx┐
-│0 1 0 Ty│
-│0 0 1 Tz│
-└0 0 0 1 ┘
+┌1  0  0  Tx┐
+│0  1  0  Ty│
+│0  0  1  Tz│
+└0  0  0  1 ┘
 
 (x, y, z, 1) に掛けると：
 新しい位置 = (x + Tx, y + Ty, z + Tz, 1)
@@ -92,10 +92,10 @@ a × b = ベクトル a と b の両方に垂直なベクトル
 ```
 スケール行列（X を Sx 倍、Y を Sy 倍、Z を Sz 倍）：
 
-┌Sx 0 0 0┐
-│0 Sy 0 0│
-│0 0 Sz 0│
-└0 0 0 1┘
+┌Sx  0   0   0┐
+│0   Sy  0   0│
+│0   0   Sz  0│
+└0   0   0   1┘
 ```
 
 ---
@@ -107,19 +107,19 @@ a × b = ベクトル a と b の両方に垂直なベクトル
 ```
 Z 軸周りに角度 θ 回転：
 
-┌cos(θ) -sin(θ) 0 0┐
-│sin(θ) cos(θ) 0 0│
-│0 0 1 0│
-└0 0 0 1┘
+┌cos(θ)  -sin(θ)  0  0┐
+│sin(θ)   cos(θ)  0  0│
+│0        0       1  0│
+└0        0       0  1┘
 ```
 
 ### GLM での回転
 
 ```cpp
 // 注意：GLM の rotate は角度をラジアンで指定
-glm::mat4 rot = glm::rotate(glm::mat4(1.0f), // 単位行列から開始
-                             glm::radians(90.0f), // 90 度 → ラジアン
-                             glm::vec3(0, 0, 1)); // Z 軸周り
+glm::mat4 rot = glm::rotate(glm::mat4(1.0f),      // 単位行列から開始
+                             glm::radians(90.0f),   // 90 度 → ラジアン
+                             glm::vec3(0, 0, 1));   // Z 軸周り
 ```
 
 ---
@@ -140,9 +140,9 @@ glm::mat4 rot = glm::rotate(glm::mat4(1.0f), // 単位行列から開始
 // コードでは逆順に書く！（右側から先に適用されるため）
 
 glm::mat4 transform = glm::mat4(1.0f);
-transform = glm::translate(transform, glm::vec3(0.5f, -0.5f, 0.0f)); // 3番目
-transform = glm::rotate(transform, glm::radians(45.0f), glm::vec3(0, 0, 1)); // 2番目
-transform = glm::scale(transform, glm::vec3(0.5f, 0.5f, 0.5f)); // 1番目
+transform = glm::translate(transform, glm::vec3(0.5f, -0.5f, 0.0f));  // 3番目
+transform = glm::rotate(transform, glm::radians(45.0f), glm::vec3(0, 0, 1));  // 2番目
+transform = glm::scale(transform, glm::vec3(0.5f, 0.5f, 0.5f));        // 1番目
 
 // 実際の適用順序：Scale → Rotate → Translate
 ```
@@ -155,8 +155,8 @@ GLM は OpenGL 専用の数学ライブラリです。
 
 ```cpp
 #include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp> // translate, rotate, scale
-#include <glm/gtc/type_ptr.hpp> // value_ptr（行列をGLに渡す）
+#include <glm/gtc/matrix_transform.hpp>  // translate, rotate, scale
+#include <glm/gtc/type_ptr.hpp>           // value_ptr（行列をGLに渡す）
 ```
 
 ### 基本的な使い方
@@ -167,7 +167,7 @@ glm::vec3 pos(1.0f, 2.0f, 3.0f);
 glm::vec4 color(1.0f, 0.5f, 0.2f, 1.0f);
 
 // 行列
-glm::mat4 identity = glm::mat4(1.0f); // 単位行列
+glm::mat4 identity = glm::mat4(1.0f);  // 単位行列
 
 // 移動
 glm::mat4 trans = glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, 0.0f, 0.0f));
@@ -200,7 +200,7 @@ layout (location = 1) in vec2 aTexCoord;
 
 out vec2 TexCoord;
 
-uniform mat4 transform; // 変換行列
+uniform mat4 transform;  // 変換行列
 
 void main() {
     gl_Position = transform * vec4(aPos, 1.0);
@@ -217,7 +217,7 @@ void main() {
 glm::mat4 transform = glm::mat4(1.0f);
 transform = glm::translate(transform, glm::vec3(0.5f, -0.5f, 0.0f));
 transform = glm::rotate(transform,
-    (float)glfwGetTime(), // 時間で角度を増やす
+    (float)glfwGetTime(),  // 時間で角度を増やす
     glm::vec3(0.0f, 0.0f, 1.0f));
 
 shader.use();
@@ -252,10 +252,10 @@ glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
 `(2, 3, 0)` だけ移動する 4×4 行列を完成させなさい。
 
 ```
-┌1 0 0 【①】┐
-│0 1 0 【②】│
-│0 0 1 【③】│
-└0 0 0 【④】┘
+┌1  0  0  【①】┐
+│0  1  0  【②】│
+│0  0  1  【③】│
+└0  0  0  【④】┘
 ```
 
 <details>
@@ -270,7 +270,7 @@ glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
 ### 問題 2：GLM コード穴埋め
 
 ```cpp
-glm::mat4 transform = glm::mat4(【 ① 】); // 単位行列
+glm::mat4 transform = glm::mat4(【 ① 】);  // 単位行列
 
 // Z 軸周りに 45 度回転
 transform = glm::rotate(transform,

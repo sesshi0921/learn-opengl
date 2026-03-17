@@ -127,7 +127,7 @@ while (!glfwWindowShouldClose(window)) {
     model = glm::rotate(model, (float)glfwGetTime(),
                         glm::vec3(0.5f, 1.0f, 0.0f));
     shader.setMat4("model", 【 ⑥ 】);
-    shader.setMat4("view", camera.【 ⑦ 】());
+    shader.setMat4("view",  camera.【 ⑦ 】());
     shader.setMat4("projection", projection);
 
     // 描画

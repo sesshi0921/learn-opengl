@@ -10,7 +10,7 @@
 
 ```
 パイプライン: 頂点データ → [頂点シェーダー] → [ジオメトリシェーダー] → [ラスタライザ] → [フラグメントシェーダー]
-                       (per-vertex) (per-primitive) (per-fragment)
+                       (per-vertex)   (per-primitive)                (per-fragment)
 
 ジオメトリシェーダーはプリミティブ1つを受け取り、0個以上のプリミティブを出力する
 ```
@@ -64,7 +64,7 @@ layout(triangle_strip, max_vertices = 3) out;
 
 ```glsl
 in gl_PerVertex {
-    vec4 gl_Position;
+    vec4  gl_Position;
     float gl_PointSize;
     float gl_ClipDistance[];
 } gl_in[];
@@ -160,23 +160,23 @@ void build_house(vec4 position) {
     float size = 0.1;
 
     // 左下
-    fColor = vec3(1.0, 0.0, 0.0); // 赤
+    fColor = vec3(1.0, 0.0, 0.0);  // 赤
     gl_Position = position + vec4(-size, -size, 0.0, 0.0);
     EmitVertex();
     // 右下
-    fColor = vec3(0.0, 1.0, 0.0); // 緑
+    fColor = vec3(0.0, 1.0, 0.0);  // 緑
     gl_Position = position + vec4( size, -size, 0.0, 0.0);
     EmitVertex();
     // 左上
-    fColor = vec3(0.0, 0.0, 1.0); // 青
-    gl_Position = position + vec4(-size, size, 0.0, 0.0);
+    fColor = vec3(0.0, 0.0, 1.0);  // 青
+    gl_Position = position + vec4(-size,  size, 0.0, 0.0);
     EmitVertex();
     // 右上
-    fColor = vec3(1.0, 1.0, 0.0); // 黄
-    gl_Position = position + vec4( size, size, 0.0, 0.0);
+    fColor = vec3(1.0, 1.0, 0.0);  // 黄
+    gl_Position = position + vec4( size,  size, 0.0, 0.0);
     EmitVertex();
     // 屋根の頂点
-    fColor = vec3(1.0, 1.0, 1.0); // 白
+    fColor = vec3(1.0, 1.0, 1.0);  // 白
     gl_Position = position + vec4( 0.0, size * 2.0, 0.0, 0.0);
     EmitVertex();
 
@@ -189,8 +189,8 @@ void main() {
 ```
 
 ```
-出力: /\ 頂点順序: 1(左下)→2(右下)→3(左上)→4(右上)→5(屋根)
-        / \ 三角形: 1-2-3, 2-3-4, 3-4-5
+出力:    /\       頂点順序: 1(左下)→2(右下)→3(左上)→4(右上)→5(屋根)
+        /  \      三角形: 1-2-3, 2-3-4, 3-4-5
        +----+
        | 家 |
        +----+
@@ -227,9 +227,9 @@ void GenerateLine(int index) {
 }
 
 void main() {
-    GenerateLine(0); // 頂点0の法線
-    GenerateLine(1); // 頂点1の法線
-    GenerateLine(2); // 頂点2の法線
+    GenerateLine(0);  // 頂点0の法線
+    GenerateLine(1);  // 頂点1の法線
+    GenerateLine(2);  // 頂点2の法線
 }
 ```
 
@@ -293,7 +293,7 @@ glCompileShader(geometryShader);
 // プログラムにアタッチ
 unsigned int shaderProgram = glCreateProgram();
 glAttachShader(shaderProgram, vertexShader);
-glAttachShader(shaderProgram, geometryShader); // ← ここで追加
+glAttachShader(shaderProgram, geometryShader);   // ← ここで追加
 glAttachShader(shaderProgram, fragmentShader);
 glLinkProgram(shaderProgram);
 

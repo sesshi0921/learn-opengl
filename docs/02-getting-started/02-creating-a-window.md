@@ -32,12 +32,12 @@ find_package(glfw3 3.3 REQUIRED)
 # ソースファイル
 add_executable(tutorial
     src/main.cpp
-    src/glad.c # GLAD のソース
+    src/glad.c          # GLAD のソース
 )
 
 # インクルードパス
 target_include_directories(tutorial PRIVATE
-    include/ # glad.h などを置く場所
+    include/             # glad.h などを置く場所
 )
 
 # リンク
@@ -56,7 +56,7 @@ endif()
 以下が最小限のウィンドウ作成コードです。
 
 ```cpp
-#include <glad/glad.h> // GLAD は GLFW より先にインクルード！
+#include <glad/glad.h>   // GLAD は GLFW より先にインクルード！
 #include <GLFW/glfw3.h>
 #include <iostream>
 
@@ -76,9 +76,9 @@ int main() {
     // 1. GLFW の初期化
     // ========================================
     glfwInit();
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3); // OpenGL 3.x
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3); // OpenGL x.3
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // コアプロファイル
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);  // OpenGL 3.x
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);  // OpenGL x.3
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);  // コアプロファイル
 
     // macOS の場合は追加で必要
     // glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
@@ -92,7 +92,7 @@ int main() {
         glfwTerminate();
         return -1;
     }
-    glfwMakeContextCurrent(window); // このウィンドウのコンテキストをカレントに
+    glfwMakeContextCurrent(window);  // このウィンドウのコンテキストをカレントに
 
     // ========================================
     // 3. GLAD の初期化（ウィンドウ作成後！）
@@ -116,7 +116,7 @@ int main() {
         processInput(window);
 
         // 画面クリア
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f); // 暗いシアン色
+        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);  // 暗いシアン色
         glClear(GL_COLOR_BUFFER_BIT);
 
         // バッファを交換（ダブルバッファリング）
@@ -141,8 +141,8 @@ int main() {
 ### `glfwWindowHint`：バージョン指定
 
 ```cpp
-glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3); // メジャーバージョン: 3
-glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3); // マイナーバージョン: 3
+glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);  // メジャーバージョン: 3
+glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);  // マイナーバージョン: 3
 // → OpenGL 3.3 のコンテキストを要求する
 ```
 
@@ -151,10 +151,10 @@ glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3); // マイナーバージョン: 3
 ```
 ウィンドウ（800x600）
 ┌──────────────────────────┐
-│ │
-│ ビューポート │
-│ (0,0) から (800,600) │
-│ │
+│                          │
+│   ビューポート           │
+│   (0,0) から (800,600)  │
+│                          │
 └──────────────────────────┘
      ↑ (0,0) = 左下
 
@@ -165,7 +165,7 @@ glViewport(x, y, width, height)
 
 ```
 フロントバッファ → モニターに表示中
-バックバッファ → 描画中（非表示）
+バックバッファ  → 描画中（非表示）
 
 glfwSwapBuffers() → 2 つを交換
 ```
@@ -184,11 +184,11 @@ glfwSwapBuffers() → 2 つを交換
 ## インクルード順序の注意
 
 ```cpp
-// 正しい順序
-#include <glad/glad.h> // GLAD を先にインクルード
-#include <GLFW/glfw3.h> // GLFW はあと
+//  正しい順序
+#include <glad/glad.h>   // GLAD を先にインクルード
+#include <GLFW/glfw3.h>  // GLFW はあと
 
-// 間違い：GLFW が OpenGL ヘッダをロードしてしまい衝突する
+//  間違い：GLFW が OpenGL ヘッダをロードしてしまい衝突する
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
 ```
@@ -332,8 +332,8 @@ if (!gladLoadGLLoader((GLADloadproc)【 ⑦ 】)) {
 
 ```cpp
 // ヒント
-float timeValue = glfwGetTime(); // 経過時間（秒）
-float greenValue = (sin(timeValue) / 2.0f) + 0.5f; // 0〜1 の範囲に変換
+float timeValue = glfwGetTime();           // 経過時間（秒）
+float greenValue = (sin(timeValue) / 2.0f) + 0.5f;  // 0〜1 の範囲に変換
 glClearColor(0.0f, greenValue, 0.0f, 1.0f);
 ```
 
