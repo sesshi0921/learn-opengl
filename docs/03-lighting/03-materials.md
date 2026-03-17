@@ -1,22 +1,22 @@
-# 📘 マテリアル（Materials）
+# マテリアル（Materials）
 
 > **目標：** 物体の素材ごとに異なるライティング特性をGLSLのstructで定義し、さまざまなマテリアルを切り替えて表示できるようになる。また、光源の強度をアンビエント・ディフューズ・スペキュラーで分離管理する方法を学ぶ。
 
 ---
 
-## 📖 マテリアルとは何か
+## マテリアルとは何か
 
 ### 素材によって変わる光の見え方
 
 前のチャプターでは、1つの `objectColor` と固定の係数（`ambientStrength = 0.1` など）だけでライティングを計算していました。しかし現実世界では、金属、木、プラスチック、ゴムなどの素材ごとに光の反射特性は大きく異なります。
 
 ```
-   ☀️ 同じ光
+      同じ光
     │         │         │
     ▼         ▼         ▼
 ┌──────┐ ┌──────┐ ┌──────┐
 │ 金属 │ │木材  │ │ ゴム │
-│ ✦✦✦ │ │      │ │      │
+│      │ │      │ │      │
 │鋭い光沢│ │やや光沢│ │光沢なし│
 └──────┘ └──────┘ └──────┘
 shininess  shininess  shininess
@@ -34,7 +34,7 @@ shininess  shininess  shininess
 
 ---
 
-## 📖 GLSLでの Material 構造体
+## GLSLでの Material 構造体
 
 ### struct による定義
 
@@ -81,7 +81,7 @@ vec3 result   = ambient + diffuse + specular;
 
 ---
 
-## 📖 実際のマテリアルデータ
+## 実際のマテリアルデータ
 
 以下は OpenGL/DirectX で広く使われるクラシックなマテリアル値です。これらの値は **devernay.free.fr** のテーブルが有名で、LearnOpenGL でも参照されています。
 
@@ -109,7 +109,7 @@ vec3 result   = ambient + diffuse + specular;
 
 ---
 
-## 📖 CPU側からのマテリアル設定
+## CPU側からのマテリアル設定
 
 ### uniform のドット記法
 
@@ -162,7 +162,7 @@ setMaterial(objectShader, gold);  // 金に設定
 
 ---
 
-## 📖 Light 構造体の導入
+## Light 構造体の導入
 
 ### なぜ光も分離するのか？
 
@@ -214,7 +214,7 @@ specular (1.0, 1.0, 1.0) ██████████ 100%
 
 ---
 
-## 📖 時間経過で光の色を変えるアニメーション
+## 時間経過で光の色を変えるアニメーション
 
 光の色を時間で変化させることで、マテリアルが異なる照明条件でどう見えるかを確認できます：
 
@@ -241,7 +241,7 @@ objectShader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
 
 ---
 
-## 📖 完全なシェーダーコード
+## 完全なシェーダーコード
 
 ### バーテックスシェーダー（materials.vs）
 
@@ -355,7 +355,7 @@ objectShader.setVec3("viewPos", camera.Position);
 
 ---
 
-## ✏️ ドリル問題
+## ドリル問題
 
 ### 問1: struct の穴埋め
 
@@ -370,7 +370,7 @@ struct Material {
 };
 ```
 
-<details><summary>📝 解答</summary>
+<details><summary> 解答</summary>
 
 ```glsl
 struct Material {
@@ -391,7 +391,7 @@ struct Material {
 2. 緑がかった diffuse で shininess が低い非金属 → ______
 3. specular に色がつき（黄色っぽく）、中程度の shininess → ______
 
-<details><summary>📝 解答</summary>
+<details><summary> 解答</summary>
 
 1. **クロム (Chrome)** — shininess = 76.8、specular = (0.774, 0.774, 0.774) でグレー/白寄り
 2. **翡翠 (Jade)** — diffuse = (0.54, 0.89, 0.63) が緑、shininess = 12.8
@@ -403,7 +403,7 @@ struct Material {
 
 銅 (Copper) マテリアルをセットするC++コードを書け。ambient = `(0.19125, 0.0735, 0.0225)`, diffuse = `(0.7038, 0.27048, 0.0828)`, specular = `(0.256777, 0.137622, 0.086014)`, shininess = `12.8`。
 
-<details><summary>📝 解答</summary>
+<details><summary> 解答</summary>
 
 ```cpp
 objectShader.setVec3("material.ambient",  0.19125f, 0.0735f, 0.0225f);
@@ -418,7 +418,7 @@ objectShader.setFloat("material.shininess", 12.8f);
 
 Light の ambient が `(0.2, 0.2, 0.2)`、Material の ambient が `(0.25, 0.20725, 0.20725)`（真珠）のとき、最終的なアンビエント成分を計算せよ。
 
-<details><summary>📝 解答</summary>
+<details><summary> 解答</summary>
 
 ```
 ambient = light.ambient * material.ambient
@@ -434,7 +434,7 @@ ambient = light.ambient * material.ambient
 
 Light 構造体で `diffuse` と `specular` を分離する利点を述べよ。
 
-<details><summary>📝 解答</summary>
+<details><summary> 解答</summary>
 
 - **ambient**: 弱めに設定して、影が真っ暗にならない最低限の光を提供
 - **diffuse**: 中程度の強度で、物体表面の基本的な陰影を表現
@@ -448,7 +448,7 @@ Light 構造体で `diffuse` と `specular` を分離する利点を述べよ。
 
 光の色アニメーションで `diffuseColor = lightColor * vec3(0.5f)` とし、さらに `ambientColor = diffuseColor * vec3(0.2f)` とする理由は？
 
-<details><summary>📝 解答</summary>
+<details><summary> 解答</summary>
 
 ambient は常に diffuse よりも弱くするべきです。もし ambient が diffuse と同じ強さだと、光が当たっていない面も明るくなりすぎて立体感がなくなります。
 
@@ -461,9 +461,9 @@ ambient は常に diffuse よりも弱くするべきです。もし ambient が
 
 ---
 
-## 🔨 実践課題
+## 実践課題
 
-### 課題1: マテリアルギャラリー ⭐⭐
+### 課題1: マテリアルギャラリー 
 
 上記のテーブルから6種類以上のマテリアルを実装し、キー入力（1〜6キー）で切り替えられるようにする。
 
@@ -479,7 +479,7 @@ ambient は常に diffuse よりも弱くするべきです。もし ambient が
 - [ ] 金属と非金属の見た目の違いが明確にわかる
 - [ ] shininess の違いがハイライトに反映されている
 
-### 課題2: 光色アニメーション ⭐⭐
+### 課題2: 光色アニメーション 
 
 時間経過で光の色を変化させ、同じマテリアルが異なる照明でどう見えるか確認する。
 
@@ -494,7 +494,7 @@ ambient は常に diffuse よりも弱くするべきです。もし ambient が
 - [ ] 光源の立方体の色が実際の光の色と一致している
 - [ ] ambient は常に diffuse より暗い
 
-### 課題3: 24個の立方体 ⭐⭐⭐
+### 課題3: 24個の立方体 
 
 devernay.free.fr のマテリアルテーブルにある全素材（24種類）をそれぞれ1つの立方体で表示するシーンを作成する。
 
@@ -526,6 +526,6 @@ for (int row = 0; row < 4; row++) {
 
 ---
 
-## 🔗 ナビゲーション
+## ナビゲーション
 
-⬅️ [基本的なライティング](./02-basic-lighting.md) | ➡️ [ライティングマップ →](./04-lighting-maps.md)
+ [基本的なライティング](./02-basic-lighting.md) | [ライティングマップ →](./04-lighting-maps.md)

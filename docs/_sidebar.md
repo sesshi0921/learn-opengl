@@ -1,9 +1,9 @@
 <!-- _sidebar.md -->
 
-- **🟢 はじめに**
+- **はじめに**
   - [はじめに（Introduction）](/01-introduction/README.md)
 
-- **🔵 入門編（Getting Started）**
+- **入門編（Getting Started）**
   - [OpenGL とは](/02-getting-started/01-opengl.md)
   - [ウィンドウの作成](/02-getting-started/02-creating-a-window.md)
   - [Hello Window](/02-getting-started/03-hello-window.md)
@@ -15,7 +15,7 @@
   - [カメラ](/02-getting-started/09-camera.md)
   - [入門編まとめ・復習](/02-getting-started/10-review.md)
 
-- **🟡 ライティング編（Lighting）**
+- **ライティング編（Lighting）**
   - [色](/03-lighting/01-colors.md)
   - [基本的なライティング](/03-lighting/02-basic-lighting.md)
   - [マテリアル](/03-lighting/03-materials.md)
@@ -23,12 +23,12 @@
   - [光源の種類](/03-lighting/05-light-casters.md)
   - [複数の光源](/03-lighting/06-multiple-lights.md)
 
-- **🟠 モデル読み込み編（Model Loading）**
+- **モデル読み込み編（Model Loading）**
   - [Assimp](/04-model-loading/01-assimp.md)
   - [メッシュ](/04-model-loading/02-mesh.md)
   - [モデル](/04-model-loading/03-model.md)
 
-- **🔴 高度な OpenGL 編（Advanced OpenGL）**
+- **高度な OpenGL 編（Advanced OpenGL）**
   - [深度テスト](/05-advanced-opengl/01-depth-testing.md)
   - [ステンシルテスト](/05-advanced-opengl/02-stencil-testing.md)
   - [ブレンディング](/05-advanced-opengl/03-blending.md)

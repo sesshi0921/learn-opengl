@@ -1,10 +1,10 @@
-# 📘 ステンシルテスト（Stencil Testing）
+# ステンシルテスト（Stencil Testing）
 
 > **目標：** ステンシルバッファの仕組みを理解し、オブジェクトアウトライン（枠線エフェクト）をステップバイステップで実装できるようになる。
 
 ---
 
-## 📖 ステンシルバッファとは
+## ステンシルバッファとは
 
 ステンシルバッファは、各ピクセルに対応する **8ビット整数値（0〜255）** を格納するバッファです。「ステンシル（stencil）」は「型紙」という意味で、特定のピクセルに対する描画の許可・禁止を制御する **マスク** として機能します。
 
@@ -28,7 +28,7 @@
 
 ---
 
-## 📖 ステンシルテストの有効化
+## ステンシルテストの有効化
 
 ```cpp
 // ステンシルテストを有効化
@@ -42,7 +42,7 @@ glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 ---
 
-## 📖 glStencilFunc — テスト条件の設定
+## glStencilFunc — テスト条件の設定
 
 ```cpp
 glStencilFunc(GLenum func, GLint ref, GLuint mask);
@@ -84,7 +84,7 @@ glStencilFunc(GL_ALWAYS, 1, 0xFF);
 
 ---
 
-## 📖 glStencilOp — テスト結果に応じた更新操作
+## glStencilOp — テスト結果に応じた更新操作
 
 ```cpp
 glStencilOp(GLenum sfail, GLenum dpfail, GLenum dppass);
@@ -119,7 +119,7 @@ glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 
 ---
 
-## 📖 glStencilMask — 書き込みマスク
+## glStencilMask — 書き込みマスク
 
 ステンシルバッファへの書き込みをビット単位で制御します。
 
@@ -135,7 +135,7 @@ glStencilMask(0x00);
 
 ---
 
-## 📖 オブジェクトアウトラインの実装
+## オブジェクトアウトラインの実装
 
 ステンシルテストの最も人気のある応用が **オブジェクトアウトライン** です。選択されたオブジェクトに色付きの枠線を表示するエフェクトです。
 
@@ -263,7 +263,7 @@ glEnable(GL_DEPTH_TEST);
 
 ---
 
-## 📖 スケーリングの注意点
+## スケーリングの注意点
 
 単純な `glm::scale` だと、オブジェクトの形状によってはアウトラインの太さが均一になりません。
 
@@ -318,7 +318,7 @@ void main()
 
 ---
 
-## ✏️ ドリル問題
+## ドリル問題
 
 ### 問題1: 穴埋め
 ステンシルテストを使い、ステンシル値が `1` のピクセルにのみ描画を許可する設定を完成させてください。
@@ -327,7 +327,7 @@ void main()
 glStencilFunc(______, ______, 0xFF);
 ```
 
-<details><summary>📝 解答</summary>
+<details><summary> 解答</summary>
 
 ```cpp
 glStencilFunc(GL_EQUAL, 1, 0xFF);
@@ -347,7 +347,7 @@ glStencilFunc(GL_EQUAL, 1, 0xFF);
 - (C) 何も変化しない
 - (D) ビットが反転する
 
-<details><summary>📝 解答</summary>
+<details><summary> 解答</summary>
 
 **(C) 何も変化しない**
 
@@ -372,7 +372,7 @@ glStencilFunc(______, 1, 0xFF);
 glStencilMask(______);
 ```
 
-<details><summary>📝 解答</summary>
+<details><summary> 解答</summary>
 
 ```cpp
 glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
@@ -393,7 +393,7 @@ glStencilMask(0x00);
 - (c) ステンシルと深度テストの設定を復元
 - (d) 深度テストを無効にする
 
-<details><summary>📝 解答</summary>
+<details><summary> 解答</summary>
 
 **(b) → (d) → (a) → (c)**
 
@@ -414,7 +414,7 @@ glStencilMask(0x00);
 - (C) ステンシルバッファへの書き込みが禁止される
 - (D) ステンシルバッファが0でクリアされる
 
-<details><summary>📝 解答</summary>
+<details><summary> 解答</summary>
 
 **(C) ステンシルバッファへの書き込みが禁止される**
 
@@ -427,7 +427,7 @@ glStencilMask(0x00);
 ### 問題6: 記述問題
 アウトラインの描画時に `glDisable(GL_DEPTH_TEST)` を行う理由を説明してください。
 
-<details><summary>📝 解答</summary>
+<details><summary> 解答</summary>
 
 深度テストが有効なままだと、アウトラインが他のオブジェクト（例えば床）に隠れてしまう場合があります。アウトラインは常にオブジェクトの周囲に完全に見えるべきなので、深度テストを無効にして、既存の深度値に関係なく描画します。
 
@@ -435,9 +435,9 @@ glStencilMask(0x00);
 
 ---
 
-## 🔨 実践課題
+## 実践課題
 
-### 課題1: 基本アウトライン ⭐⭐
+### 課題1: 基本アウトライン 
 2つのキューブにオレンジ色のアウトラインを描画してください。
 
 **チェックポイント:**
@@ -448,7 +448,7 @@ glStencilMask(0x00);
 
 ---
 
-### 課題2: 選択オブジェクトのハイライト ⭐⭐⭐
+### 課題2: 選択オブジェクトのハイライト 
 マウスカーソルに最も近いオブジェクトだけにアウトラインを表示する仕組みを実装してください。
 
 **チェックポイント:**
@@ -459,7 +459,7 @@ glStencilMask(0x00);
 
 ---
 
-### 課題3: カスタムステンシルエフェクト ⭐⭐⭐
+### 課題3: カスタムステンシルエフェクト 
 ステンシルバッファを使って「ポータル（窓）」エフェクトを作ってください。画面上の四角形の中にだけ別のシーンが見えるようにします。
 
 **チェックポイント:**
@@ -470,6 +470,6 @@ glStencilMask(0x00);
 
 ---
 
-## 🔗 ナビゲーション
+## ナビゲーション
 
-⬅️ [深度テスト](./01-depth-testing.md) | ➡️ [ブレンディング →](./03-blending.md)
+ [深度テスト](./01-depth-testing.md) | [ブレンディング →](./03-blending.md)

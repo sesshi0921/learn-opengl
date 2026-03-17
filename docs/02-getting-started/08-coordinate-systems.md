@@ -1,10 +1,10 @@
-# 📘 入門編 8：座標系（Coordinate Systems）
+# 入門編 8：座標系（Coordinate Systems）
 
 > **目標：** OpenGL の 5 つの座標空間と、Model/View/Projection 行列を理解する
 
 ---
 
-## 📖 5 つの座標空間
+## 5 つの座標空間
 
 OpenGL で 3D オブジェクトが画面に表示されるまでに、**5 つの座標空間** を経由します。
 
@@ -24,7 +24,7 @@ NDC 空間（Normalized Device Coordinates）
 
 ---
 
-## 📖 各座標空間の説明
+## 各座標空間の説明
 
 ### 1. オブジェクト空間（Local Space）
 オブジェクト自身のローカルな座標系。3D モデルを作成した際の座標のこと。
@@ -65,7 +65,7 @@ w 成分で割る「透視除算」により -1.0〜1.0 の範囲に正規化。
 
 ---
 
-## 📖 透視投影（Perspective Projection）
+## 透視投影（Perspective Projection）
 
 遠いものが小さく見える「遠近感」のある投影方法。
 
@@ -96,7 +96,7 @@ glm::mat4 projection = glm::perspective(
 
 ---
 
-## 📖 正射影（Orthographic Projection）
+## 正射影（Orthographic Projection）
 
 遠近感のない平行投影。2D ゲーム・UI・CAD に使用。
 
@@ -119,7 +119,7 @@ glm::mat4 projection = glm::ortho(
 
 ---
 
-## 📖 MVP 行列
+## MVP 行列
 
 最終的な変換式：
 
@@ -156,7 +156,7 @@ void setMat4(const std::string& name, const glm::mat4& mat) const {
 
 ---
 
-## 📖 3D の立方体を描く
+## 3D の立方体を描く
 
 ```cpp
 // 立方体の 36 頂点（6面 × 2三角形 × 3頂点）
@@ -197,7 +197,7 @@ for (unsigned int i = 0; i < 10; i++) {
 
 ---
 
-## 📖 深度バッファ（Z-Buffer）
+## 深度バッファ（Z-Buffer）
 
 3D では奥にあるオブジェクトを手前のオブジェクトで隠す必要があります。これを **深度テスト** と呼びます。
 
@@ -231,7 +231,7 @@ MVP 変換の流れ：
 
 ---
 
-## ✏️ ドリル問題
+## ドリル問題
 
 ### 問題 1：座標空間の順序
 
@@ -247,7 +247,7 @@ MVP 変換の流れ：
 ```
 
 <details>
-<summary>📝 解答</summary>
+<summary> 解答</summary>
 
 **F → C → A → E → D → B**
 
@@ -266,7 +266,7 @@ gl_Position = 【 ① 】 * 【 ② 】 * 【 ③ 】 * vec4(aPos, 1.0);
 ```
 
 <details>
-<summary>📝 解答</summary>
+<summary> 解答</summary>
 
 ① `projection`  
 ② `view`  
@@ -286,7 +286,7 @@ glm::perspective(glm::radians(45.0f), 800.0f/600.0f, 0.1f, 100.0f)
 各引数の意味を答えなさい。
 
 <details>
-<summary>📝 解答</summary>
+<summary> 解答</summary>
 
 ① **垂直視野角（fov）**：45 度
 ② **アスペクト比**：幅/高さ = 800/600
@@ -302,7 +302,7 @@ glm::perspective(glm::radians(45.0f), 800.0f/600.0f, 0.1f, 100.0f)
 深度テストを有効にしないと何が起きるか説明し、有効にするコードを書きなさい。
 
 <details>
-<summary>📝 解答</summary>
+<summary> 解答</summary>
 
 深度テストなし：後に描画されたオブジェクトが前に描画されたものを上書きするため、奥のオブジェクトが手前に見えたり、描画順序によって結果が変わったりする。
 
@@ -331,7 +331,7 @@ glm::lookAt(
 ①②③ の意味を答えなさい。
 
 <details>
-<summary>📝 解答</summary>
+<summary> 解答</summary>
 
 ① **カメラの位置（eye position）**：Z 軸の 3.0 の位置
 ② **注視点（target/center）**：原点 (0,0,0) を見ている
@@ -341,17 +341,17 @@ glm::lookAt(
 
 ---
 
-## 🔨 実践課題
+## 実践課題
 
-### 課題 1：回転する立方体 ⭐⭐
+### 課題 1：回転する立方体 
 
 立方体を描画し、時間とともに回転するようにしなさい。MVP 行列をすべて実装すること。
 
-### 課題 2：10 個の立方体 ⭐⭐⭐
+### 課題 2：10 個の立方体 
 
 本章のコード例を参考に、10 個の立方体をシーンに配置しなさい。それぞれ異なる向きに回転させること。
 
-### 課題 3：カメラを動かす ⭐⭐⭐
+### 課題 3：カメラを動かす 
 
 View 行列（`glm::lookAt`）のカメラ位置を時間とともに円軌道上で動かし、立方体を360度ぐるりと回り込むようなアニメーションを作りなさい。
 
@@ -369,6 +369,6 @@ glm::mat4 view = glm::lookAt(
 
 ---
 
-## 🔗 ナビゲーション
+## ナビゲーション
 
-⬅️ [変換](./07-transformations.md) | ➡️ [カメラ →](./09-camera.md)
+ [変換](./07-transformations.md) | [カメラ →](./09-camera.md)

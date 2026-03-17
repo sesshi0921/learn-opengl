@@ -1,10 +1,10 @@
-# 📘 ライティングマップ（Lighting Maps）
+# ライティングマップ（Lighting Maps）
 
 > **目標：** テクスチャを使って物体の各ピクセルごとに異なるマテリアル特性を持たせる「ライティングマップ」を理解し、ディフューズマップ・スペキュラーマップ・エミッションマップを実装できるようになる。
 
 ---
 
-## 📖 なぜライティングマップが必要か
+## なぜライティングマップが必要か
 
 前章では Material 構造体に `vec3 diffuse / specular` を設定して物体全体の色を決めていました。しかし現実の物体は**場所ごとに素材が異なり**ます。木製の箱なら木材部分と金属の縁で反射特性が違います：
 
@@ -26,7 +26,7 @@
 
 ---
 
-## 📖 ディフューズマップ（Diffuse Map）
+## ディフューズマップ（Diffuse Map）
 
 ディフューズマップは物体表面の**基本的な色**をテクスチャで定義します。テクスチャチャプターで学んだ画像テクスチャそのものです。ambient にも同じテクスチャを再利用します（ambient ≈ diffuse の色なので）。
 
@@ -92,7 +92,7 @@ vec3 diffuse   = light.diffuse * diff * diffColor;
 
 ---
 
-## 📖 テクスチャの読み込みとバインド（CPU側）
+## テクスチャの読み込みとバインド（CPU側）
 
 ```cpp
 unsigned int diffuseMap = loadTexture("container2.png");
@@ -115,7 +115,7 @@ setInt("material.diffuse", 0) → sampler2D がユニット0を参照
 
 ---
 
-## 📖 スペキュラーマップ（Specular Map）
+## スペキュラーマップ（Specular Map）
 
 スペキュラーマップは**各ピクセルの鏡面反射の強さ**をテクスチャで定義します。黒は光沢なし（木材）、白は最大光沢（金属）です。
 
@@ -151,7 +151,7 @@ glBindTexture(GL_TEXTURE_2D, specularMap);
 
 ---
 
-## 📖 エミッションマップ（Emission Map）
+## エミッションマップ（Emission Map）
 
 光源からの照明とは無関係に**物体自身が発光する**部分を定義するテクスチャです。ネオンサインや溶岩の模様に使われます。黒は発光なし、色付きはその色で発光します。
 
@@ -173,7 +173,7 @@ vec3 result   = ambient + diffuse + specular + emission;
 
 ---
 
-## 📖 完全なフラグメントシェーダー
+## 完全なフラグメントシェーダー
 
 ```glsl
 #version 330 core
@@ -264,7 +264,7 @@ glBindTexture(GL_TEXTURE_2D, emissionMap);
 
 ---
 
-## ✏️ ドリル問題
+## ドリル問題
 
 ### 問1: Material構造体の穴埋め
 
@@ -277,7 +277,7 @@ struct Material {
 };
 ```
 
-<details><summary>📝 解答</summary>
+<details><summary> 解答</summary>
 
 ```glsl
 sampler2D diffuse;
@@ -297,7 +297,7 @@ ______(GL_TEXTURE_2D, diffuseMap);  // (2)
 lightingShader.______(______);      // (3)
 ```
 
-<details><summary>📝 解答</summary>
+<details><summary> 解答</summary>
 
 ```cpp
 glActiveTexture(GL_TEXTURE0);                  // (1)
@@ -315,7 +315,7 @@ lightingShader.setInt("material.diffuse", 0);  // (3)
 2. 金属の縁だけ光沢あり、木は光沢なし → ______
 3. ネオン文字を光源なしでも光らせる → ______
 
-<details><summary>📝 解答</summary>
+<details><summary> 解答</summary>
 
 1. **diffuse** — 拡散色を位置ごとに定義
 2. **specular** — 鏡面反射の強さを位置ごとに定義
@@ -331,7 +331,7 @@ float diff   = max(dot(norm, lightDir), 0.0);
 vec3 diffuse = light.diffuse * diff * vec3(______(material.______, ______));
 ```
 
-<details><summary>📝 解答</summary>
+<details><summary> 解答</summary>
 
 ```glsl
 vec3 ambient = light.ambient * vec3(texture(material.diffuse, TexCoords));
@@ -349,7 +349,7 @@ vec3 diffuse = light.diffuse * diff * vec3(texture(material.diffuse, TexCoords))
 - B) 黒=反射なし、白=最大反射
 - C) 黒=影、白=光が当たっている
 
-<details><summary>📝 解答</summary>
+<details><summary> 解答</summary>
 
 **B)** `spec * vec3(0,0,0) = 0`（反射ゼロ）、`spec * vec3(1,1,1)`（最大反射）。
 
@@ -359,7 +359,7 @@ vec3 diffuse = light.diffuse * diff * vec3(texture(material.diffuse, TexCoords))
 
 エミッションを最終結果に**加算**する理由を述べよ。
 
-<details><summary>📝 解答</summary>
+<details><summary> 解答</summary>
 
 エミッションは外部光源に依存しない「自ら放つ光」です。照明計算とは独立した寄与なので**足す**ことで、暗い環境でも発光部分が明るく見えます。乗算だと周囲が暗いとき発光も消えてしまいます。
 
@@ -367,9 +367,9 @@ vec3 diffuse = light.diffuse * diff * vec3(texture(material.diffuse, TexCoords))
 
 ---
 
-## 🔨 実践課題
+## 実践課題
 
-### 課題1: ディフューズ＋スペキュラーマップの箱 ⭐⭐
+### 課題1: ディフューズ＋スペキュラーマップの箱 
 
 `container2.png`（ディフューズ）と `container2_specular.png`（スペキュラー）を使い、木材は光沢なし・金属の縁だけ鏡面反射する箱を実装する。
 
@@ -378,7 +378,7 @@ vec3 diffuse = light.diffuse * diff * vec3(texture(material.diffuse, TexCoords))
 - [ ] 金属の縁にだけ鏡面反射が現れる
 - [ ] カメラを動かすとハイライトが移動する
 
-### 課題2: エミッションマップの追加 ⭐⭐
+### 課題2: エミッションマップの追加 
 
 上記の箱にエミッションマップを追加し、光源を暗くしても特定部分が発光することを確認する。
 
@@ -387,7 +387,7 @@ vec3 diffuse = light.diffuse * diff * vec3(texture(material.diffuse, TexCoords))
 - [ ] 照明を暗くしてもエミッション部分は明るいまま
 - [ ] エミッションがない部分は通常のライティング
 
-### 課題3: 反転スペキュラーマップ ⭐⭐⭐
+### 課題3: 反転スペキュラーマップ 
 
 シェーダーでスペキュラーマップの値を `vec3(1.0) - specColor` で反転し、木材が光沢を持ち金属が持たない不思議な箱を作成。キー入力で通常/反転を切り替えて視覚的にスペキュラーマップの効果を体感する。
 
@@ -398,6 +398,6 @@ vec3 diffuse = light.diffuse * diff * vec3(texture(material.diffuse, TexCoords))
 
 ---
 
-## 🔗 ナビゲーション
+## ナビゲーション
 
-⬅️ [マテリアル](./03-materials.md) | ➡️ [光源の種類 →](./05-light-casters.md)
+ [マテリアル](./03-materials.md) | [光源の種類 →](./05-light-casters.md)

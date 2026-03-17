@@ -1,10 +1,10 @@
-# 📘 高度なデータ操作（Advanced Data）
+# 高度なデータ操作（Advanced Data）
 
 > **目標：** OpenGL のバッファオブジェクトを柔軟に操作する方法（部分更新、直接マッピング、バッファ間コピー、データレイアウト戦略）を習得する
 
 ---
 
-## 📖 バッファの基本おさらい
+## バッファの基本おさらい
 
 これまで `glBufferData` でバッファ全体にデータを転送してきました。しかし実際のアプリケーションでは、バッファの一部だけを更新したり、CPU から直接バッファメモリに書き込んだりする場面が多くあります。
 
@@ -19,7 +19,7 @@
 
 ---
 
-## 📖 glBufferSubData による部分更新
+## glBufferSubData による部分更新
 
 `glBufferData` はバッファ全体を再確保しますが、`glBufferSubData` は既存バッファの一部だけを上書きします。
 
@@ -60,7 +60,7 @@ void glBufferSubData(GLenum target,
 
 ---
 
-## 📖 glMapBuffer によるバッファへの直接アクセス
+## glMapBuffer によるバッファへの直接アクセス
 
 `glBufferSubData` はデータの「コピー」を行いますが、`glMapBuffer` はバッファメモリへの **ポインタ** を直接取得し、C/C++ のポインタ操作で読み書きできます。
 
@@ -104,7 +104,7 @@ glBufferSubData vs glMapBuffer:
 
 ---
 
-## 📖 バッファの使い方ヒント（Usage Hints）
+## バッファの使い方ヒント（Usage Hints）
 
 `glBufferData` の第4引数は、ドライバに対してバッファの使い方を「ヒント」として伝えます。
 
@@ -140,7 +140,7 @@ glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
 
 ---
 
-## 📖 頂点属性のデータレイアウト
+## 頂点属性のデータレイアウト
 
 ### インターリーブ（Interleaved）方式
 
@@ -215,7 +215,7 @@ glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float),
 
 ---
 
-## 📖 glCopyBufferSubData によるバッファ間コピー
+## glCopyBufferSubData によるバッファ間コピー
 
 あるバッファの内容を別のバッファにコピーできます。
 
@@ -266,7 +266,7 @@ glCopyBufferSubData(GL_COPY_READ_BUFFER, GL_COPY_WRITE_BUFFER,
 
 ---
 
-## 📖 バッファオブジェクトの内部動作
+## バッファオブジェクトの内部動作
 
 ```
 ┌──────────────────────────────────────────────────────┐
@@ -309,12 +309,12 @@ glCopyBufferSubData(GL_COPY_READ_BUFFER, GL_COPY_WRITE_BUFFER,
 
 ---
 
-## ✏️ ドリル問題
+## ドリル問題
 
 ### 問1（穴埋め）
 既存バッファの一部にデータを書き込むには `gl___(GL_ARRAY_BUFFER, offset, size, data)` を使う。
 
-<details><summary>📝 解答</summary>
+<details><summary> 解答</summary>
 
 `glBufferSubData`
 
@@ -323,7 +323,7 @@ glCopyBufferSubData(GL_COPY_READ_BUFFER, GL_COPY_WRITE_BUFFER,
 ### 問2（穴埋め）
 バッファメモリへの直接ポインタを取得するには `gl___(GL_ARRAY_BUFFER, GL_WRITE_ONLY)` を呼び、使い終わったら `gl___` で解除する。
 
-<details><summary>📝 解答</summary>
+<details><summary> 解答</summary>
 
 `glMapBuffer` と `glUnmapBuffer`
 
@@ -337,7 +337,7 @@ B. `GL_DYNAMIC_DRAW`
 C. `GL_STREAM_DRAW`  
 D. `GL_STATIC_READ`  
 
-<details><summary>📝 解答</summary>
+<details><summary> 解答</summary>
 
 **C. `GL_STREAM_DRAW`**
 
@@ -348,7 +348,7 @@ D. `GL_STATIC_READ`
 ### 問4（計算）
 インターリーブ方式で、位置（vec3: 12byte）、法線（vec3: 12byte）、UV（vec2: 8byte）を格納する場合、ストライドは何バイトか？ また、UV 属性のバイトオフセットはいくつか？
 
-<details><summary>📝 解答</summary>
+<details><summary> 解答</summary>
 
 - ストライド: 12 + 12 + 8 = **32 バイト**
 - UV のオフセット: 12 + 12 = **24 バイト**
@@ -363,7 +363,7 @@ B. `GL_COPY_READ_BUFFER`
 C. `GL_COPY_WRITE_BUFFER`  
 D. `GL_TRANSFORM_FEEDBACK_BUFFER`  
 
-<details><summary>📝 解答</summary>
+<details><summary> 解答</summary>
 
 **B と C**。`GL_COPY_READ_BUFFER` と `GL_COPY_WRITE_BUFFER` はバッファ間コピーのための専用ターゲットです。
 
@@ -372,7 +372,7 @@ D. `GL_TRANSFORM_FEEDBACK_BUFFER`
 ### 問6（計算）
 分離方式で、100 頂点分の位置（vec3）・法線（vec3）・UV（vec2）を1つの VBO に格納する。法線ブロックの開始オフセットと UV ブロックの開始オフセットを求めよ。
 
-<details><summary>📝 解答</summary>
+<details><summary> 解答</summary>
 
 - 位置ブロック: 100 × 3 × 4byte = 1200 byte（オフセット 0）
 - 法線ブロック開始: **1200 byte**
@@ -384,7 +384,7 @@ D. `GL_TRANSFORM_FEEDBACK_BUFFER`
 ### 問7（記述）
 `glMapBuffer` 使用中に描画コマンドを発行するとどうなるか説明せよ。
 
-<details><summary>📝 解答</summary>
+<details><summary> 解答</summary>
 
 バッファがマップされている間は OpenGL がそのバッファにアクセスできないため、描画コマンドは未定義動作やエラーを引き起こします。`glUnmapBuffer` でマップを解除してから描画する必要があります。
 
@@ -392,9 +392,9 @@ D. `GL_TRANSFORM_FEEDBACK_BUFFER`
 
 ---
 
-## 🔨 実践課題
+## 実践課題
 
-### 課題1: glBufferSubData による段階的データ埋め ⭐⭐
+### 課題1: glBufferSubData による段階的データ埋め 
 空の VBO を確保し、`glBufferSubData` を使って位置・色・UV のデータを別々のタイミングで書き込むプログラムを作成せよ。
 
 **チェックポイント:**
@@ -403,7 +403,7 @@ D. `GL_TRANSFORM_FEEDBACK_BUFFER`
 - [ ] `glVertexAttribPointer` のオフセットが書き込み位置と一致
 - [ ] 正しく描画される
 
-### 課題2: glMapBuffer によるリアルタイム更新 ⭐⭐⭐
+### 課題2: glMapBuffer によるリアルタイム更新 
 三角形の頂点色を `glMapBuffer` で毎フレーム更新し、虹色アニメーションを実装せよ。
 
 **チェックポイント:**
@@ -412,7 +412,7 @@ D. `GL_TRANSFORM_FEEDBACK_BUFFER`
 - [ ] `glUnmapBuffer` を必ず呼んでいる
 - [ ] スムーズに色が変化する
 
-### 課題3: インターリーブ vs 分離の比較 ⭐⭐⭐
+### 課題3: インターリーブ vs 分離の比較 
 同じメッシュデータをインターリーブ方式と分離方式の2通りで格納し、両方が同じ描画結果になることを確認せよ。
 
 **チェックポイント:**
@@ -421,7 +421,7 @@ D. `GL_TRANSFORM_FEEDBACK_BUFFER`
 - [ ] 画面を分割して左右に描画し、同じ見た目であることを確認
 - [ ] 各方式の `glVertexAttribPointer` 呼び出しをコメントで説明
 
-### 課題4: バッファ間コピー ⭐⭐⭐⭐
+### 課題4: バッファ間コピー 
 VBO の内容を `glCopyBufferSubData` で別の VBO にコピーし、コピー先 VBO を使って描画が正しく行われることを確認せよ。
 
 **チェックポイント:**
@@ -432,6 +432,6 @@ VBO の内容を `glCopyBufferSubData` で別の VBO にコピーし、コピー
 
 ---
 
-## 🔗 ナビゲーション
+## ナビゲーション
 
-⬅️ [キューブマップ](./06-cubemaps.md) | ➡️ [高度な GLSL →](./08-advanced-glsl.md)
+ [キューブマップ](./06-cubemaps.md) | [高度な GLSL →](./08-advanced-glsl.md)

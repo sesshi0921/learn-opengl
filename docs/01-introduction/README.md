@@ -1,10 +1,10 @@
-# 🎮 はじめに（Introduction）
+# はじめに（Introduction）
 
 > **目標：** この教材が何を目指すのか、OpenGL 学習の全体像を掴む
 
 ---
 
-## 📖 OpenGL 学習へようこそ
+## OpenGL 学習へようこそ
 
 OpenGL（Open Graphics Library）は、2D・3D グラフィックスを描画するための **クロスプラットフォームな API** です。1992 年に Silicon Graphics 社が公開して以来、ゲーム・CAD・映像制作など幅広い分野で使われ続けています。
 
@@ -12,7 +12,7 @@ OpenGL（Open Graphics Library）は、2D・3D グラフィックスを描画す
 
 ---
 
-## 📖 この教材の構成
+## この教材の構成
 
 ### 入門編（Getting Started）
 環境構築から始め、三角形・テクスチャ・カメラまで、OpenGL の基礎を固めます。
@@ -34,7 +34,7 @@ Assimp ライブラリを使って、外部 3D モデルファイルを読み込
 
 ---
 
-## 📖 OpenGL とは何か（概要）
+## OpenGL とは何か（概要）
 
 OpenGL は **仕様（Specification）** であり、実装ではありません。実際の処理は GPU ドライバが行います。
 
@@ -57,7 +57,7 @@ OpenGL は **仕様（Specification）** であり、実装ではありません
 
 ---
 
-## 📖 ステートマシンとしての OpenGL
+## ステートマシンとしての OpenGL
 
 OpenGL は **ステートマシン（状態機械）** です。現在の「状態」に基づいて描画が行われます。
 
@@ -74,7 +74,7 @@ glDrawArrays(GL_TRIANGLES, 0, 3);  // 設定した状態で三角形を描く
 
 ---
 
-## 📖 オブジェクトとは
+## オブジェクトとは
 
 OpenGL では描画に使うリソース（テクスチャ、バッファなど）を **オブジェクト** として管理します。
 
@@ -107,7 +107,7 @@ glBindObject(GL_WINDOW_TARGET, 0);
 
 ---
 
-## ✏️ ドリル問題
+## ドリル問題
 
 ### 問題 1：穴埋め問題
 
@@ -118,7 +118,7 @@ glBindObject(GL_WINDOW_TARGET, 0);
 > OpenGL は現在の【　④　】に基づいて動作する【　⑤　】である。
 
 <details>
-<summary>📝 解答</summary>
+<summary> 解答</summary>
 
 ① 仕様（Specification）  
 ② GPU ドライバ  
@@ -140,7 +140,7 @@ glBindObject(GL_WINDOW_TARGET, 0);
 4. 同じプログラムを異なる OS で動かすとき、OpenGL の動作は完全に同一である
 
 <details>
-<summary>📝 解答</summary>
+<summary> 解答</summary>
 
 1. ✗（Silicon Graphics 社が開発した）
 2. ○
@@ -163,7 +163,7 @@ OpenGL でオブジェクトを使う手順を正しい順に並べなさい。
 ```
 
 <details>
-<summary>📝 解答</summary>
+<summary> 解答</summary>
 
 **B → C → D → A**
 
@@ -173,7 +173,7 @@ OpenGL でオブジェクトを使う手順を正しい順に並べなさい。
 
 ---
 
-## 🔨 実践課題
+## 実践課題
 
 ### 課題 1：環境確認チェックリスト
 
@@ -195,6 +195,6 @@ OpenGL でオブジェクトを使う手順を正しい順に並べなさい。
 
 ---
 
-## 🔗 次のチャプター
+## 次のチャプター
 
-➡️ [OpenGL とは →](./02_01_opengl.md)
+ [OpenGL とは →](./02_01_opengl.md)

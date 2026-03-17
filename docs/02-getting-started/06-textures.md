@@ -1,10 +1,10 @@
-# 📘 入門編 6：テクスチャ（Textures）
+# 入門編 6：テクスチャ（Textures）
 
 > **目標：** テクスチャを読み込んでオブジェクトに貼り付け、UV マッピングを理解する
 
 ---
 
-## 📖 テクスチャとは
+## テクスチャとは
 
 テクスチャは **画像データを GPU に転送して 3D オブジェクトの表面に貼り付ける** 技術です。
 
@@ -20,7 +20,7 @@
 
 ---
 
-## 📖 UV 座標（テクスチャ座標）
+## UV 座標（テクスチャ座標）
 
 テクスチャ座標は **0.0〜1.0 の範囲** で表します。
 
@@ -48,7 +48,7 @@ float vertices[] = {
 
 ---
 
-## 📖 テクスチャの折り返し（Wrapping）
+## テクスチャの折り返し（Wrapping）
 
 UV 座標が 0〜1 の範囲を超えたときの動作を設定します。
 
@@ -68,7 +68,7 @@ glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
 ---
 
-## 📖 テクスチャフィルタリング
+## テクスチャフィルタリング
 
 テクスチャを拡大・縮小したときのピクセルのサンプリング方法です。
 
@@ -86,7 +86,7 @@ glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 ---
 
-## 📖 ミップマップ（Mipmaps）
+## ミップマップ（Mipmaps）
 
 遠くのオブジェクトに高解像度テクスチャを使うと、**エイリアシング（モアレ）** が発生します。ミップマップはこれを防ぐために、**あらかじめ縮小版のテクスチャを用意** しておきます。
 
@@ -116,7 +116,7 @@ glGenerateMipmap(GL_TEXTURE_2D);
 
 ---
 
-## 📖 テクスチャの読み込み（stb_image）
+## テクスチャの読み込み（stb_image）
 
 ```cpp
 // main.cpp の先頭（.cpp ファイルでのみ定義する）
@@ -131,7 +131,7 @@ unsigned char* data = stbi_load("container.jpg", &width, &height, &nrChannels, 0
 
 ---
 
-## 📖 テクスチャオブジェクトの作成
+## テクスチャオブジェクトの作成
 
 ```cpp
 // テクスチャオブジェクト生成
@@ -172,7 +172,7 @@ stbi_image_free(data);
 
 ---
 
-## 📖 シェーダーでテクスチャを使う
+## シェーダーでテクスチャを使う
 
 ```glsl
 // 頂点シェーダー
@@ -213,7 +213,7 @@ glUniform1i(glGetUniformLocation(shaderProgram, "ourTexture"), 0);
 
 ---
 
-## 📖 複数テクスチャのミックス
+## 複数テクスチャのミックス
 
 ```glsl
 // フラグメントシェーダー（2 つのテクスチャをブレンド）
@@ -258,7 +258,7 @@ shader.setInt("texture2", 1);
 
 ---
 
-## ✏️ ドリル問題
+## ドリル問題
 
 ### 問題 1：穴埋め（テクスチャ設定）
 
@@ -280,7 +280,7 @@ glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
 ```
 
 <details>
-<summary>📝 解答</summary>
+<summary> 解答</summary>
 
 ① `1`  
 ② `GL_TEXTURE_2D`  
@@ -303,7 +303,7 @@ glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
 | 左上 | 【⑦】 | 【⑧】 |
 
 <details>
-<summary>📝 解答</summary>
+<summary> 解答</summary>
 
 | 位置 | U | V |
 |------|---|---|
@@ -325,7 +325,7 @@ glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
 3. 床に市松模様のテクスチャを張りたい
 
 <details>
-<summary>📝 解答</summary>
+<summary> 解答</summary>
 
 1. `GL_REPEAT`（タイル状の繰り返し）
 2. `GL_CLAMP_TO_EDGE`（端を引き伸ばす）
@@ -345,7 +345,7 @@ shader.setInt("texture2", 1);
 ```
 
 <details>
-<summary>📝 解答</summary>
+<summary> 解答</summary>
 
 1. テクスチャユニット **1** をアクティブに設定
 2. `texture2` をテクスチャユニット 1 にバインド
@@ -358,7 +358,7 @@ shader.setInt("texture2", 1);
 ### 問題 5：`stbi_set_flip_vertically_on_load(true)` はなぜ必要か？
 
 <details>
-<summary>📝 解答</summary>
+<summary> 解答</summary>
 
 画像ファイルは一般的に **左上** を原点として格納されているが、OpenGL のテクスチャ座標は **左下** が原点のため、そのまま読み込むと上下が逆になる。`stbi_set_flip_vertically_on_load(true)` を呼ぶことで読み込み時に垂直方向を反転する。
 
@@ -366,9 +366,9 @@ shader.setInt("texture2", 1);
 
 ---
 
-## 🔨 実践課題
+## 実践課題
 
-### 課題 1：テクスチャを貼る ⭐⭐
+### 課題 1：テクスチャを貼る 
 
 任意の JPG/PNG 画像を読み込んで、四角形に貼り付けなさい。
 
@@ -378,11 +378,11 @@ shader.setInt("texture2", 1);
 - [ ] シェーダーで `sampler2D` が使われている
 - [ ] 正しい向きで表示される
 
-### 課題 2：タイリング ⭐⭐
+### 課題 2：タイリング 
 
 UV 座標を `0〜2` の範囲に変更して、テクスチャが 2×2 でタイル状に表示されるようにしなさい。
 
-### 課題 3：2 枚のテクスチャをブレンド ⭐⭐⭐
+### 課題 3：2 枚のテクスチャをブレンド 
 
 2 枚のテクスチャをブレンドし、キーボードの `↑` `↓` で混合比を変化させなさい。
 
@@ -396,6 +396,6 @@ if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
 
 ---
 
-## 🔗 ナビゲーション
+## ナビゲーション
 
-⬅️ [シェーダー](./05-shaders.md) | ➡️ [変換 →](./07-transformations.md)
+ [シェーダー](./05-shaders.md) | [変換 →](./07-transformations.md)

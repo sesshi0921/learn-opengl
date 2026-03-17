@@ -1,10 +1,10 @@
-# 📘 入門編 5：シェーダー（Shaders）
+# 入門編 5：シェーダー（Shaders）
 
 > **目標：** GLSL の文法・型・ユニフォーム・シェーダークラスを習得する
 
 ---
 
-## 📖 GLSL の基本文法
+## GLSL の基本文法
 
 GLSL（OpenGL Shading Language）は C 言語ベースのシェーダー言語です。
 
@@ -27,7 +27,7 @@ void main() {
 
 ---
 
-## 📖 GLSL のデータ型
+## GLSL のデータ型
 
 ### スカラー型
 
@@ -57,7 +57,7 @@ void main() {
 
 ---
 
-## 📖 ベクトルの操作
+## ベクトルの操作
 
 ### スウィズリング（Swizzling）
 
@@ -91,7 +91,7 @@ vec4 v5 = vec4(v1, v1);        // vec2 + vec2 で vec4
 
 ---
 
-## 📖 in/out：ステージ間のデータ受け渡し
+## in/out：ステージ間のデータ受け渡し
 
 頂点シェーダーとフラグメントシェーダーの間でデータを渡すには、**同じ名前の out/in 変数** を使います。
 
@@ -127,7 +127,7 @@ void main() {
 
 ---
 
-## 📖 頂点カラーの追加
+## 頂点カラーの追加
 
 ```cpp
 // 位置（xyz）+ 色（rgb）を持つ頂点データ
@@ -160,7 +160,7 @@ glEnableVertexAttribArray(1);
 
 ---
 
-## 📖 ユニフォーム（Uniforms）
+## ユニフォーム（Uniforms）
 
 ユニフォームは CPU から GPU に値を渡す変数です。**すべての頂点・フラグメントで同じ値** が使われます。
 
@@ -202,7 +202,7 @@ glUniform4f(colorLocation, 0.0f, greenValue, 0.0f, 1.0f);
 
 ---
 
-## 📖 シェーダークラス
+## シェーダークラス
 
 毎回シェーダーをコンパイルするコードを書くのは大変なので、再利用可能なクラスにまとめます。
 
@@ -328,7 +328,7 @@ myShader.setFloat("someUniform", 1.0f);
 
 ---
 
-## ✏️ ドリル問題
+## ドリル問題
 
 ### 問題 1：スウィズリング
 
@@ -344,7 +344,7 @@ float d = v.g;       // d = ?
 ```
 
 <details>
-<summary>📝 解答</summary>
+<summary> 解答</summary>
 
 ```
 a = vec3(1.0, 2.0, 3.0)
@@ -375,7 +375,7 @@ float vertices[] = {
 2. 属性 1 の stride と offset は？
 
 <details>
-<summary>📝 解答</summary>
+<summary> 解答</summary>
 
 1 頂点 = 位置(3) + UV(2) = 5 float = **20 バイト**
 
@@ -399,7 +399,7 @@ int loc = 【 ① 】(shaderProgram, "ourColor");
 ```
 
 <details>
-<summary>📝 解答</summary>
+<summary> 解答</summary>
 
 ① `glGetUniformLocation`  
 ② `glUseProgram`  
@@ -414,7 +414,7 @@ int loc = 【 ① 】(shaderProgram, "ourColor");
 頂点シェーダーの `out vec3 vColor` に対応するフラグメントシェーダーの宣言を書きなさい。
 
 <details>
-<summary>📝 解答</summary>
+<summary> 解答</summary>
 
 ```glsl
 in vec3 vColor;
@@ -426,21 +426,21 @@ in vec3 vColor;
 
 ---
 
-## 🔨 実践課題
+## 実践課題
 
-### 課題 1：虹色三角形 ⭐⭐
+### 課題 1：虹色三角形 
 
 3 頂点に異なる色（赤・緑・青）を設定して、グラデーション三角形を表示しなさい。
 
-### 課題 2：揺れる色 ⭐⭐
+### 課題 2：揺れる色 
 
 ユニフォームを使って、フラグメントシェーダーの色が時間とともに変化するようにしなさい。
 
-### 課題 3：Shader クラスの実装 ⭐⭐⭐
+### 課題 3：Shader クラスの実装 
 
 本章のシェーダークラスをファイルに分けて実装し、`.vert` と `.frag` ファイルからシェーダーを読み込むようにしなさい。
 
-### 課題 4：頂点を上下に動かす ⭐⭐⭐
+### 課題 4：頂点を上下に動かす 
 
 頂点シェーダーにユニフォーム `offset` を追加して、三角形が上下に揺れるようにしなさい。
 
@@ -454,6 +454,6 @@ void main() {
 
 ---
 
-## 🔗 ナビゲーション
+## ナビゲーション
 
-⬅️ [Hello Triangle](./04-hello-triangle.md) | ➡️ [テクスチャ →](./06-textures.md)
+ [Hello Triangle](./04-hello-triangle.md) | [テクスチャ →](./06-textures.md)

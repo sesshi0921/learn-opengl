@@ -1,15 +1,15 @@
-# 📘 光源の種類（Light Casters）
+# 光源の種類（Light Casters）
 
 > **目標：** 平行光源（Directional Light）、点光源（Point Light）、スポットライト（Spotlight）の3種類の光源をGLSLで実装し、距離減衰やスポットライトのカットオフ角を理解・実装できるようになる。
 
 ---
 
-## 📖 3種類の光源の概要
+## 3種類の光源の概要
 
 ```
 1. 平行光源           2. 点光源            3. スポットライト
     ↓ ↓ ↓ ↓ ↓         ─╲ │ ╱─             │
-    ↓ ↓ ↓ ↓ ↓        ─── ☀ ───           ╲ │ ╱
+    ↓ ↓ ↓ ↓ ↓        ───  ───           ╲ │ ╱
     ↓ ↓ ↓ ↓ ↓         ─╱ │ ╲─             ▽
 太陽のように遠い    電球のように全方向    懐中電灯のように円錐
 方向のみ           位置+全方向+減衰     位置+方向+角度+減衰
@@ -23,13 +23,13 @@
 
 ---
 
-## 📖 平行光源（Directional Light）
+## 平行光源（Directional Light）
 
 太陽のように非常に遠い光源は、すべての光線がほぼ**平行**に降り注ぎます。位置ではなく**方向のみ**で定義します。
 
 ```
 点光源:  各フラグメントへの方向が異なる     平行光源:  全フラグメントに同じ方向
-      ☀                                    ↓ ↓ ↓ ↓ ↓
+                                          ↓ ↓ ↓ ↓ ↓
      ╱│╲                                   ↓ ↓ ↓ ↓ ↓
     A  B  C                                A  B  C
 ```
@@ -71,7 +71,7 @@ lightingShader.setVec3("dirLight.specular",   0.5f,  0.5f,  0.5f);
 
 ---
 
-## 📖 点光源（Point Light）と減衰
+## 点光源（Point Light）と減衰
 
 点光源は空間上の一点から全方向に光を放ちます。重要な特徴は**距離が離れるほど光が弱くなる**（減衰）ことです。
 
@@ -136,7 +136,7 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 
 ---
 
-## 📖 スポットライト（Spotlight）
+## スポットライト（Spotlight）
 
 スポットライトはある一点から**特定の方向にだけ**光を放つ円錐形の光源です。
 
@@ -209,7 +209,7 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 
 ---
 
-## 📖 懐中電灯の実装
+## 懐中電灯の実装
 
 カメラの位置と方向をスポットライトに設定すれば、プレイヤーの懐中電灯になります：
 
@@ -228,7 +228,7 @@ lightingShader.setVec3("spotLight.specular", 1.0f, 1.0f, 1.0f);
 
 ---
 
-## 📖 3種類の光源の比較
+## 3種類の光源の比較
 
 ```
 ┌─────────────┬──────────────┬──────────────┬─────────────────────┐
@@ -261,7 +261,7 @@ lightingShader.setVec3("spotLight.specular", 1.0f, 1.0f, 1.0f);
 
 ---
 
-## ✏️ ドリル問題
+## ドリル問題
 
 ### 問1: 構造体の穴埋め
 
@@ -274,7 +274,7 @@ struct DirLight {
 };
 ```
 
-<details><summary>📝 解答</summary>
+<details><summary> 解答</summary>
 
 `direction`, `ambient`, `diffuse`, `specular`。平行光源は position を持たず direction のみ。
 
@@ -284,7 +284,7 @@ struct DirLight {
 
 constant=1.0, linear=0.09, quadratic=0.032 のとき、距離 d=50 での $F_{att}$ を計算せよ。
 
-<details><summary>📝 解答</summary>
+<details><summary> 解答</summary>
 
 $$F_{att} = \frac{1.0}{1.0 + 0.09 \times 50 + 0.032 \times 2500} = \frac{1.0}{1.0 + 4.5 + 80.0} = \frac{1.0}{85.5} \approx 0.0117$$
 
@@ -296,7 +296,7 @@ $$F_{att} = \frac{1.0}{1.0 + 0.09 \times 50 + 0.032 \times 2500} = \frac{1.0}{1.
 
 cutOff=cos(12.5°)=0.9763, outerCutOff=cos(17.5°)=0.9537 で、フラグメントが15°の角度にある場合の intensity は？
 
-<details><summary>📝 解答</summary>
+<details><summary> 解答</summary>
 
 ```
 θ = cos(15°) = 0.9659
@@ -312,7 +312,7 @@ intensity = (0.9659 - 0.9537) / 0.0226 = 0.5398
 
 `direction = (0, -1, 0)`（上→下）のとき、`lightDir` を正しく計算するコードは？
 
-<details><summary>📝 解答</summary>
+<details><summary> 解答</summary>
 
 ```glsl
 vec3 lightDir = normalize(-dirLight.direction); // = (0, 1, 0) 上向き
@@ -329,7 +329,7 @@ vec3 lightDir = normalize(-dirLight.direction); // = (0, 1, 0) 上向き
 - B) linear は距離の二乗に比例する
 - C) quadratic は遠距離で急激に減衰させる
 
-<details><summary>📝 解答</summary>
+<details><summary> 解答</summary>
 
 **A) と C)** が正しい。B は誤り（linear は距離に比例する一次項、二乗は quadratic）。
 
@@ -343,7 +343,7 @@ lightingShader.setVec3("spotLight.______", camera.Front);
 lightingShader.setFloat("spotLight.cutOff", glm::cos(glm::radians(______)));
 ```
 
-<details><summary>📝 解答</summary>
+<details><summary> 解答</summary>
 
 ```cpp
 lightingShader.setVec3("spotLight.position",  camera.Position);
@@ -355,9 +355,9 @@ lightingShader.setFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
 
 ---
 
-## 🔨 実践課題
+## 実践課題
 
-### 課題1: 平行光源のシーン ⭐⭐
+### 課題1: 平行光源のシーン 
 
 10個の箱を配置し、`DirLight` と `CalcDirLight` で太陽に照らされたシーンを構築する。
 
@@ -366,7 +366,7 @@ lightingShader.setFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
 - [ ] 距離が離れても光の強さが変わらない（減衰なし）
 - [ ] ディフューズ/スペキュラーマップが正しく動作する
 
-### 課題2: 減衰する点光源 ⭐⭐
+### 課題2: 減衰する点光源 
 
 点光源を1つ配置し、減衰テーブルの値を変えて効果の違いを体験する。
 
@@ -375,7 +375,7 @@ lightingShader.setFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
 - [ ] quadratic を大きくすると遠くの箱が急に暗くなる
 - [ ] linear を大きくすると中距離の減衰が強まる
 
-### 課題3: 懐中電灯スポットライト ⭐⭐⭐
+### 課題3: 懐中電灯スポットライト 
 
 カメラ追従のソフトエッジスポットライトを暗い環境(ambient=0)で実装する。
 
@@ -387,6 +387,6 @@ lightingShader.setFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
 
 ---
 
-## 🔗 ナビゲーション
+## ナビゲーション
 
-⬅️ [ライティングマップ](./04-lighting-maps.md) | ➡️ [複数の光源 →](./06-multiple-lights.md)
+ [ライティングマップ](./04-lighting-maps.md) | [複数の光源 →](./06-multiple-lights.md)
