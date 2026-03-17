@@ -1,30 +1,30 @@
-# 📘 高度な GLSL（Advanced GLSL）
+# 高度な GLSL（Advanced GLSL）
 
 > **目標：** GLSL の組み込み変数を活用し、インターフェースブロックとユニフォームバッファオブジェクト（UBO）で効率的なシェーダー間データ共有を実装できるようになる
 
 ---
 
-## 📖 GLSL の組み込み変数
+## GLSL の組み込み変数
 
 GLSL には、シェーダーステージ間でデータをやり取りするための特別な変数が用意されています。明示的に宣言しなくても使えるものがあり、レンダリングパイプラインの動作を細かく制御できます。
 
 ```
 パイプラインと組み込み変数の対応:
 
-  頂点シェーダー                 フラグメントシェーダー
-  ┌────────────────────┐       ┌────────────────────┐
-  │ 入力:               │       │ 入力:               │
-  │   gl_VertexID       │       │   gl_FragCoord      │
-  │                     │       │   gl_FrontFacing    │
-  │ 出力:               │  ──→  │                     │
-  │   gl_Position       │       │ 出力:               │
-  │   gl_PointSize      │       │   gl_FragDepth      │
-  └────────────────────┘       └────────────────────┘
+  頂点シェーダー フラグメントシェーダー
+  ┌────────────────────┐ ┌────────────────────┐
+  │ 入力: │ │ 入力: │
+  │ gl_VertexID │ │ gl_FragCoord │
+  │ │ │ gl_FrontFacing │
+  │ 出力: │ ──→ │ │
+  │ gl_Position │ │ 出力: │
+  │ gl_PointSize │ │ gl_FragDepth │
+  └────────────────────┘ └────────────────────┘
 ```
 
 ---
 
-## 📖 頂点シェーダーの組み込み変数
+## 頂点シェーダーの組み込み変数
 
 ### gl_Position
 
@@ -64,7 +64,7 @@ void main() {
 
 ---
 
-## 📖 フラグメントシェーダーの組み込み変数
+## フラグメントシェーダーの組み込み変数
 
 ### gl_FragCoord（ウィンドウ座標）
 
@@ -72,9 +72,9 @@ void main() {
 
 ```
   (0, height) ──── (width, height)
-    │                    │
-    │  gl_FragCoord.xy   │
-    │                    │
+    │ │
+    │ gl_FragCoord.xy │
+    │ │
   (0, 0) ──────── (width, 0)
 ```
 
@@ -104,7 +104,7 @@ void main() {
 
 ---
 
-## 📖 gl_FragDepth（深度の手動書き換え）
+## gl_FragDepth（深度の手動書き換え）
 
 `gl_FragDepth` に値を書き込むと深度値を上書きできますが、**Early Depth Testing**（FS 実行前に深度テストする最適化）が無効になります。
 
@@ -127,24 +127,24 @@ layout (depth_greater) out float gl_FragDepth; // 元の値以上にのみ変更
 
 ---
 
-## 📖 インターフェースブロック
+## インターフェースブロック
 
 頂点シェーダーからフラグメントシェーダーに複数の変数を渡す際、`in/out` を1つずつ宣言する代わりに **ブロック** としてまとめることができます。
 
 ```glsl
-// 頂点シェーダー                        // フラグメントシェーダー
-out VS_OUT {                          in VS_OUT {        // ブロック名は同じ
-    vec2 TexCoords;                       vec2 TexCoords;
-    vec3 FragPos;                         vec3 FragPos;
-    vec3 Normal;                          vec3 Normal;
-} vs_out;                             } fs_in;           // インスタンス名は異なってOK
+// 頂点シェーダー // フラグメントシェーダー
+out VS_OUT { in VS_OUT { // ブロック名は同じ
+    vec2 TexCoords; vec2 TexCoords;
+    vec3 FragPos; vec3 FragPos;
+    vec3 Normal; vec3 Normal;
+} vs_out; } fs_in; // インスタンス名は異なってOK
 ```
 
 **ルール:** ブロック型名（`VS_OUT`）とメンバーの型・名・順序は一致必須。インスタンス名は異なってよい。
 
 ---
 
-## 📖 ユニフォームバッファオブジェクト（UBO）
+## ユニフォームバッファオブジェクト（UBO）
 
 ### 問題: uniform の重複設定
 
@@ -169,21 +169,21 @@ UBO を使えば、1つのバッファに uniform データを格納し、複数
 UBO の仕組み:
 
   ┌─────────────────────────┐
-  │    Uniform Buffer       │
-  │  ┌───────────────────┐  │
-  │  │ projection (mat4) │  │   バインディングポイント 0
-  │  │ view       (mat4) │  │ ──────────────┐
-  │  └───────────────────┘  │               │
-  └─────────────────────────┘               │
+  │ Uniform Buffer │
+  │ ┌───────────────────┐ │
+  │ │ projection (mat4) │ │ バインディングポイント 0
+  │ │ view (mat4) │ │ ──────────────┐
+  │ └───────────────────┘ │ │
+  └─────────────────────────┘ │
                                             ▼
                               ┌──────────────────────┐
-                              │ GL Binding Point 0   │
+                              │ GL Binding Point 0 │
                               └───┬──────┬──────┬───┘
-                                  │      │      │
-                                  ▼      ▼      ▼
+                                  │ │ │
+                                  ▼ ▼ ▼
                               ShaderA ShaderB ShaderC
-                              (block  (block  (block
-                               idx 0)  idx 0)  idx 0)
+                              (block (block (block
+                               idx 0) idx 0) idx 0)
 ```
 
 ### GLSL 側: uniform ブロック宣言
@@ -191,8 +191,8 @@ UBO の仕組み:
 ```glsl
 #version 330 core
 layout (std140) uniform Matrices {
-    mat4 projection;  // オフセット: 0
-    mat4 view;        // オフセット: 64
+    mat4 projection; // オフセット: 0
+    mat4 view; // オフセット: 64
 };
 // 合計: 128 bytes
 ```
@@ -216,12 +216,12 @@ layout (std140) uniform Matrices {
 
 ```glsl
 layout (std140) uniform ExampleBlock {
-    float value;      // オフセット: 0   (サイズ 4,  アライン 4)
-    vec3  vector;     // オフセット: 16  (サイズ 12, アライン 16)
-    mat4  matrix;     // オフセット: 32  (サイズ 64, アライン 16)
-    float values[3];  // オフセット: 96  (各 16 byte にパディング)
-    bool  boolean;    // オフセット: 144 (サイズ 4,  アライン 4)
-    int   integer;    // オフセット: 148 (サイズ 4,  アライン 4)
+    float value; // オフセット: 0 (サイズ 4, アライン 4)
+    vec3 vector; // オフセット: 16 (サイズ 12, アライン 16)
+    mat4 matrix; // オフセット: 32 (サイズ 64, アライン 16)
+    float values[3]; // オフセット: 96 (各 16 byte にパディング)
+    bool boolean; // オフセット: 144 (サイズ 4, アライン 4)
+    int integer; // オフセット: 148 (サイズ 4, アライン 4)
 };
 // 合計: 152 bytes
 ```
@@ -241,9 +241,9 @@ glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
 // ステップ2: バインディングポイントに紐づけ
 glBindBufferRange(GL_UNIFORM_BUFFER,
-                  0,                    // バインディングポイント
+                  0, // バインディングポイント
                   uboMatrices,
-                  0,                    // オフセット
+                  0, // オフセット
                   2 * sizeof(glm::mat4)); // サイズ
 
 // ステップ3: 各シェーダーの uniform ブロックをバインディングポイントに接続
@@ -280,8 +280,8 @@ shaderB.setMat4("model", modelB);
 ### 接続関係のまとめ図
 
 ```
-glUniformBlockBinding  →  シェーダーのブロック ←→ バインディングポイント
-glBindBufferBase/Range →  UBO ←→ バインディングポイント
+glUniformBlockBinding → シェーダーのブロック ←→ バインディングポイント
+glBindBufferBase/Range → UBO ←→ バインディングポイント
 
   Shader A: "Matrices" ─┐
   Shader B: "Matrices" ─┤── Binding Point 0 ── UBO (uboMatrices)
@@ -308,12 +308,12 @@ glBindBufferBase/Range →  UBO ←→ バインディングポイント
 
 ---
 
-## ✏️ ドリル問題
+## ドリル問題
 
 ### 問1（穴埋め）
 ポイントスプライトのサイズをシェーダーから制御するには、C++ 側で `glEnable(_____)` を呼んでから、頂点シェーダーで `gl_____` に値を代入する。
 
-<details><summary>📝 解答</summary>
+<details><summary> 解答</summary>
 
 `GL_PROGRAM_POINT_SIZE` と `gl_PointSize`
 
@@ -327,7 +327,7 @@ B. Early Depth Testing が無効になる
 C. フラグメントシェーダーの実行がスキップされる  
 D. 深度バッファが読み取り専用になる  
 
-<details><summary>📝 解答</summary>
+<details><summary> 解答</summary>
 
 **B**。`gl_FragDepth` への書き込みは深度値を変更する可能性があるため、フラグメントシェーダー実行前の深度テスト（Early Depth Testing）が無効になります。
 
@@ -338,14 +338,14 @@ D. 深度バッファが読み取り専用になる
 
 ```glsl
 layout (std140) uniform LightBlock {
-    vec4  position;    // オフセット: ?
-    vec3  color;       // オフセット: ?
-    float intensity;   // オフセット: ?
-    mat4  lightSpace;  // オフセット: ?
+    vec4 position; // オフセット: ?
+    vec3 color; // オフセット: ?
+    float intensity; // オフセット: ?
+    mat4 lightSpace; // オフセット: ?
 };
 ```
 
-<details><summary>📝 解答</summary>
+<details><summary> 解答</summary>
 
 1. `position` (vec4): アライン 16 → オフセット **0**、サイズ 16
 2. `color` (vec3): アライン 16 → オフセット **16**、サイズ 12
@@ -361,14 +361,14 @@ layout (std140) uniform LightBlock {
 
 ```glsl
 layout (std140) uniform TestBlock {
-    float a;       // 0
-    vec3  b;       // ?
-    float c;       // ?
-    bool  flag;    // ?
+    float a; // 0
+    vec3 b; // ?
+    float c; // ?
+    bool flag; // ?
 };
 ```
 
-<details><summary>📝 解答</summary>
+<details><summary> 解答</summary>
 
 1. `a` (float): オフセット 0、サイズ 4
 2. `b` (vec3): アライン 16 → 次の 16 の倍数 = オフセット **16**、サイズ 12
@@ -380,7 +380,7 @@ layout (std140) uniform TestBlock {
 ### 問5（穴埋め）
 UBO をバインディングポイント 2 に接続するには `glBindBuffer___(GL_UNIFORM_BUFFER, 2, ubo)` を呼ぶ。
 
-<details><summary>📝 解答</summary>
+<details><summary> 解答</summary>
 
 `glBindBufferBase`
 
@@ -396,7 +396,7 @@ B. インスタンス名のみ
 C. ブロックの型名とメンバーの型・名前・順序  
 D. すべて（型名、インスタンス名、メンバー）  
 
-<details><summary>📝 解答</summary>
+<details><summary> 解答</summary>
 
 **C**。ブロックの型名（例: `VS_OUT`）とメンバーの型・名前・順序は一致が必要ですが、インスタンス名（例: `vs_out` / `fs_in`）は異なっていて構いません。
 
@@ -405,7 +405,7 @@ D. すべて（型名、インスタンス名、メンバー）
 ### 問7（記述）
 `gl_FragCoord.y` を使って画面を上下2分割し、上半分では通常のテクスチャ表示、下半分ではグレースケール表示を行うフラグメントシェーダーを書け（画面高さは 600 ピクセルとする）。
 
-<details><summary>📝 解答</summary>
+<details><summary> 解答</summary>
 
 ```glsl
 #version 330 core
@@ -429,9 +429,9 @@ void main() {
 
 ---
 
-## 🔨 実践課題
+## 実践課題
 
-### 課題1: gl_FragCoord による画面分割エフェクト ⭐⭐
+### 課題1: gl_FragCoord による画面分割エフェクト 
 `gl_FragCoord` を使って画面を4分割し、各象限で異なるエフェクト（通常、グレースケール、反転、セピア）を適用せよ。
 
 **チェックポイント:**
@@ -440,7 +440,7 @@ void main() {
 - [ ] ウィンドウサイズを uniform で渡している（ハードコード回避）
 - [ ] ウィンドウリサイズ時にも正しく動作する
 
-### 課題2: UBO によるビュー・プロジェクション共有 ⭐⭐⭐
+### 課題2: UBO によるビュー・プロジェクション共有 
 3つの異なるシェーダーで同じビュー行列とプロジェクション行列を UBO で共有し、3つの異なる色の立方体を描画せよ。
 
 **チェックポイント:**
@@ -450,7 +450,7 @@ void main() {
 - [ ] projection は1度、view はフレームごとに `glBufferSubData` で更新
 - [ ] model 行列のみ各シェーダーに個別設定
 
-### 課題3: gl_FrontFacing による両面テクスチャ ⭐⭐⭐
+### 課題3: gl_FrontFacing による両面テクスチャ 
 フェイスカリングを無効にし、`gl_FrontFacing` で表面と裏面に異なるテクスチャを表示する立方体を作成せよ。
 
 **チェックポイント:**
@@ -459,7 +459,7 @@ void main() {
 - [ ] `gl_FrontFacing` で適切に切り替え
 - [ ] 立方体を回転させると裏面テクスチャが見える
 
-### 課題4: std140 バッファの検証ツール ⭐⭐⭐⭐
+### 課題4: std140 バッファの検証ツール 
 任意の uniform ブロック定義を入力すると、各メンバーの `std140` オフセットとパディングを計算して表示する C++ プログラムを作成せよ。
 
 **チェックポイント:**
@@ -470,6 +470,6 @@ void main() {
 
 ---
 
-## 🔗 ナビゲーション
+## ナビゲーション
 
-⬅️ [高度なデータ操作](./07-advanced-data.md) | ➡️ [ジオメトリシェーダー →](./09-geometry-shader.md)
+ [高度なデータ操作](./07-advanced-data.md) | [ジオメトリシェーダー →](./09-geometry-shader.md)

@@ -1,10 +1,10 @@
-# 📘 入門編 10：まとめ・復習ドリル（Review）
+# 入門編 10：まとめ・復習ドリル（Review）
 
 > **目標：** 入門編全体を振り返り、知識を体系化する
 
 ---
 
-## 📖 入門編の全体像
+## 入門編の全体像
 
 ```
 環境構築
@@ -34,7 +34,7 @@
 
 ---
 
-## ✏️ 総合ドリル
+## 総合ドリル
 
 ### 問題 1：OpenGL 基礎
 
@@ -47,7 +47,7 @@
 5. フラグメントの最終的な色を決める GPU プログラム
 
 <details>
-<summary>📝 解答</summary>
+<summary> 解答</summary>
 
 1. VBO（Vertex Buffer Object）
 2. VAO（Vertex Array Object）
@@ -72,7 +72,7 @@
 | テクスチャサンプラー | 【⑤】 |
 
 <details>
-<summary>📝 解答</summary>
+<summary> 解答</summary>
 
 ① `vec3`  
 ② `vec4`  
@@ -94,7 +94,7 @@
 - (D) `view * projection * model * aPos`
 
 <details>
-<summary>📝 解答</summary>
+<summary> 解答</summary>
 
 **(C)** `projection * view * model * aPos`
 
@@ -127,7 +127,7 @@ while (!glfwWindowShouldClose(window)) {
     model = glm::rotate(model, (float)glfwGetTime(),
                         glm::vec3(0.5f, 1.0f, 0.0f));
     shader.setMat4("model", 【 ⑥ 】);
-    shader.setMat4("view",  camera.【 ⑦ 】());
+    shader.setMat4("view", camera.【 ⑦ 】());
     shader.setMat4("projection", projection);
 
     // 描画
@@ -141,7 +141,7 @@ while (!glfwWindowShouldClose(window)) {
 ```
 
 <details>
-<summary>📝 解答</summary>
+<summary> 解答</summary>
 
 ① `lastFrame`  
 ② `processInput`  
@@ -174,7 +174,7 @@ while (!glfwWindowShouldClose(window)) {
 ```
 
 <details>
-<summary>📝 解答</summary>
+<summary> 解答</summary>
 
 **C → B → A → F → D → E → G → A（再バインド）→ H**
 
@@ -185,7 +185,7 @@ while (!glfwWindowShouldClose(window)) {
 
 ---
 
-## 🔨 最終総合課題：3D シーンを作る
+## 最終総合課題：3D シーンを作る
 
 入門編で学んだすべての技術を使って、以下の仕様のシーンを作成しなさい。
 
@@ -214,6 +214,6 @@ while (!glfwWindowShouldClose(window)) {
 
 ---
 
-## 🔗 ナビゲーション
+## ナビゲーション
 
-⬅️ [カメラ](./09-camera.md) | ➡️ [ライティング編へ →](../03-lighting/01-colors.md)
+ [カメラ](./09-camera.md) | [ライティング編へ →](../03-lighting/01-colors.md)

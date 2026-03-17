@@ -1,17 +1,17 @@
-# 📘 入門編 4：Hello Triangle（最重要チャプター！）
+# 入門編 4：Hello Triangle（最重要チャプター！）
 
 > **目標：** VAO・VBO・シェーダーを使って画面に三角形を描く。OpenGL で「何かを描く」ための全手順を習得する
 
 ---
 
-## 📖 三角形を描くために必要なもの
+## 三角形を描くために必要なもの
 
 ```
 必要なもの：
   1. 頂点データ（CPU 側の float 配列）
-  2. VBO  → GPU にデータを転送するバッファ
-  3. VAO  → 頂点属性の設定を記憶するオブジェクト
-  4. 頂点シェーダー  → 頂点の位置を決める
+  2. VBO → GPU にデータを転送するバッファ
+  3. VAO → 頂点属性の設定を記憶するオブジェクト
+  4. 頂点シェーダー → 頂点の位置を決める
   5. フラグメントシェーダー → 色を決める
   6. シェーダープログラム → 2 つのシェーダーをリンクしたもの
   7. glDrawArrays → 実際に描画する命令
@@ -19,14 +19,14 @@
 
 ---
 
-## 📖 頂点入力（Vertex Input）
+## 頂点入力（Vertex Input）
 
 ```cpp
 // 三角形の 3 頂点（NDC 座標）
 float vertices[] = {
-    -0.5f, -0.5f, 0.0f,  // 左下
-     0.5f, -0.5f, 0.0f,  // 右下
-     0.0f,  0.5f, 0.0f   // 上
+    -0.5f, -0.5f, 0.0f, // 左下
+     0.5f, -0.5f, 0.0f, // 右下
+     0.0f, 0.5f, 0.0f // 上
 };
 ```
 
@@ -34,13 +34,13 @@ float vertices[] = {
       (0, 0.5)
         △
        / \
-      /   \
+      / \
 (-0.5,-0.5)─(0.5,-0.5)
 ```
 
 ---
 
-## 📖 VAO（Vertex Array Object）
+## VAO（Vertex Array Object）
 
 VAO は「頂点属性の設定をまとめて記憶するオブジェクト」です。
 
@@ -72,14 +72,14 @@ glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
 // 3. 頂点属性を設定（VAO に記録される）
 glVertexAttribPointer(
-    0,                  // 属性インデックス（シェーダーの location と対応）
-    3,                  // 成分数（x, y, z の 3 つ）
-    GL_FLOAT,           // データ型
-    GL_FALSE,           // 正規化しない
-    3 * sizeof(float),  // ストライド（1 頂点のバイト数）
-    (void*)0            // オフセット（先頭から 0 バイト）
+    0, // 属性インデックス（シェーダーの location と対応）
+    3, // 成分数（x, y, z の 3 つ）
+    GL_FLOAT, // データ型
+    GL_FALSE, // 正規化しない
+    3 * sizeof(float), // ストライド（1 頂点のバイト数）
+    (void*)0 // オフセット（先頭から 0 バイト）
 );
-glEnableVertexAttribArray(0);  // 属性 0 を有効化
+glEnableVertexAttribArray(0); // 属性 0 を有効化
 
 // 4. バインドを解除
 glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -88,7 +88,7 @@ glBindVertexArray(0);
 
 ---
 
-## 📖 シェーダーのコンパイルとリンク
+## シェーダーのコンパイルとリンク
 
 ### シェーダーソースコード（文字列として保持）
 
@@ -105,7 +105,7 @@ const char* fragmentShaderSource = R"(
     #version 330 core
     out vec4 FragColor;
     void main() {
-        FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);  // オレンジ
+        FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f); // オレンジ
     }
 )";
 ```
@@ -156,7 +156,7 @@ glDeleteShader(fragmentShader);
 
 ---
 
-## 📖 描画（レンダリングループ内）
+## 描画（レンダリングループ内）
 
 ```cpp
 while (!glfwWindowShouldClose(window)) {
@@ -173,9 +173,9 @@ while (!glfwWindowShouldClose(window)) {
 
     // 描画！
     glDrawArrays(
-        GL_TRIANGLES,  // プリミティブの種類
-        0,             // 開始インデックス
-        3              // 頂点数
+        GL_TRIANGLES, // プリミティブの種類
+        0, // 開始インデックス
+        3 // 頂点数
     );
 
     glfwSwapBuffers(window);
@@ -185,23 +185,23 @@ while (!glfwWindowShouldClose(window)) {
 
 ---
 
-## 📖 EBO（Element Buffer Object）：四角形を描く
+## EBO（Element Buffer Object）：四角形を描く
 
 三角形 2 つで四角形を描くとき、頂点の重複を避けるため **EBO（インデックスバッファ）** を使います。
 
 ```cpp
 // 四角形の 4 頂点
 float vertices[] = {
-     0.5f,  0.5f, 0.0f,  // 右上  [0]
-     0.5f, -0.5f, 0.0f,  // 右下  [1]
-    -0.5f, -0.5f, 0.0f,  // 左下  [2]
-    -0.5f,  0.5f, 0.0f   // 左上  [3]
+     0.5f, 0.5f, 0.0f, // 右上 [0]
+     0.5f, -0.5f, 0.0f, // 右下 [1]
+    -0.5f, -0.5f, 0.0f, // 左下 [2]
+    -0.5f, 0.5f, 0.0f // 左上 [3]
 };
 
 // インデックス（三角形 2 つで四角形）
 unsigned int indices[] = {
-    0, 1, 3,  // 三角形 1（右上・右下・左上）
-    1, 2, 3   // 三角形 2（右下・左下・左上）
+    0, 1, 3, // 三角形 1（右上・右下・左上）
+    1, 2, 3 // 三角形 2（右下・左下・左上）
 };
 
 unsigned int EBO;
@@ -215,13 +215,13 @@ glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 ---
 
-## 📖 ワイヤーフレームモード
+## ワイヤーフレームモード
 
 デバッグに便利：
 
 ```cpp
-glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);   // ワイヤーフレーム
-glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);   // 通常（デフォルト）
+glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // ワイヤーフレーム
+glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // 通常（デフォルト）
 ```
 
 ---
@@ -252,7 +252,7 @@ glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);   // 通常（デフォルト）
 
 ---
 
-## ✏️ ドリル問題
+## ドリル問題
 
 ### 問題 1：穴埋め（VAO/VBO）
 
@@ -270,7 +270,7 @@ glEnableVertexAttribArray(【 ⑥ 】);
 ```
 
 <details>
-<summary>📝 解答</summary>
+<summary> 解答</summary>
 
 ① `1`  
 ② `1`  
@@ -287,14 +287,14 @@ glEnableVertexAttribArray(【 ⑥ 】);
 
 ```cpp
 glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-//                   ↑  ↑     ↑         ↑           ↑                ↑
-//                   A  B     C         D           E                F
+// ↑ ↑ ↑ ↑ ↑ ↑
+// A B C D E F
 ```
 
 各引数 A〜F の意味を答えなさい。
 
 <details>
-<summary>📝 解答</summary>
+<summary> 解答</summary>
 
 - A: 属性インデックス（シェーダーの `layout(location=0)` に対応）
 - B: 成分数（vec3 なので 3）
@@ -322,7 +322,7 @@ glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 ```
 
 <details>
-<summary>📝 解答</summary>
+<summary> 解答</summary>
 
 **D → E → B → C → F → A → G**
 
@@ -337,7 +337,7 @@ glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 四角形を EBO なしで描くとき、何頂点のデータが必要か？EBO ありでは何頂点か？
 
 <details>
-<summary>📝 解答</summary>
+<summary> 解答</summary>
 
 - **EBO なし：** 三角形 2 つ = **6 頂点**（重複あり）
 - **EBO あり：** ユニーク頂点 **4 頂点** + インデックス 6 個
@@ -368,12 +368,12 @@ void main() {
 【 ④ 】 vec4 FragColor;
 
 void main() {
-    FragColor = vec4(1.0f, 0.5f, 0.2f, 【 ⑤ 】);  // 不透明なオレンジ
+    FragColor = vec4(1.0f, 0.5f, 0.2f, 【 ⑤ 】); // 不透明なオレンジ
 }
 ```
 
 <details>
-<summary>📝 解答</summary>
+<summary> 解答</summary>
 
 ① `core`  
 ② `in`  
@@ -385,9 +385,9 @@ void main() {
 
 ---
 
-## 🔨 実践課題
+## 実践課題
 
-### 課題 1：三角形を描く ⭐
+### 課題 1：三角形を描く 
 
 本章のコードをすべて組み合わせて、画面にオレンジ色の三角形を表示しなさい。
 
@@ -396,13 +396,13 @@ void main() {
 - [ ] 暗いシアンの背景に三角形が見える
 - [ ] ESC で終了できる
 
-### 課題 2：別の形にする ⭐⭐
+### 課題 2：別の形にする 
 
 頂点データを変更して以下の形を描きなさい。
 1. 逆さ三角形（▽）
 2. 四角形（EBO を使う）
 
-### 課題 3：2 つの三角形 ⭐⭐⭐
+### 課題 3：2 つの三角形 
 
 VAO・VBO を 2 つずつ用意して、2 つの三角形を別々のオブジェクトとして描きなさい。
 
@@ -413,12 +413,12 @@ glGenVertexArrays(2, VAOs);
 glGenBuffers(2, VBOs);
 ```
 
-### 課題 4：別の色で 2 つの三角形 ⭐⭐⭐
+### 課題 4：別の色で 2 つの三角形 
 
 課題 3 に加えて、2 つの三角形に異なるフラグメントシェーダー（別の色）を適用しなさい。
 
 ---
 
-## 🔗 ナビゲーション
+## ナビゲーション
 
-⬅️ [Hello Window](./03-hello-window.md) | ➡️ [シェーダー →](./05-shaders.md)
+ [Hello Window](./03-hello-window.md) | [シェーダー →](./05-shaders.md)

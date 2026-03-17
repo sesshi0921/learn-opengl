@@ -1,18 +1,18 @@
-# 📘 光源の種類（Light Casters）
+# 光源の種類（Light Casters）
 
 > **目標：** 平行光源（Directional Light）、点光源（Point Light）、スポットライト（Spotlight）の3種類の光源をGLSLで実装し、距離減衰やスポットライトのカットオフ角を理解・実装できるようになる。
 
 ---
 
-## 📖 3種類の光源の概要
+## 3種類の光源の概要
 
 ```
-1. 平行光源           2. 点光源            3. スポットライト
-    ↓ ↓ ↓ ↓ ↓         ─╲ │ ╱─             │
-    ↓ ↓ ↓ ↓ ↓        ─── ☀ ───           ╲ │ ╱
-    ↓ ↓ ↓ ↓ ↓         ─╱ │ ╲─             ▽
-太陽のように遠い    電球のように全方向    懐中電灯のように円錐
-方向のみ           位置+全方向+減衰     位置+方向+角度+減衰
+1. 平行光源 2. 点光源 3. スポットライト
+    ↓ ↓ ↓ ↓ ↓ ─╲ │ ╱─ │
+    ↓ ↓ ↓ ↓ ↓ ─── ─── ╲ │ ╱
+    ↓ ↓ ↓ ↓ ↓ ─╱ │ ╲─ ▽
+太陽のように遠い 電球のように全方向 懐中電灯のように円錐
+方向のみ 位置+全方向+減衰 位置+方向+角度+減衰
 ```
 
 | 光源タイプ | 位置 | 方向 | 減衰 | カットオフ | 例 |
@@ -23,22 +23,22 @@
 
 ---
 
-## 📖 平行光源（Directional Light）
+## 平行光源（Directional Light）
 
 太陽のように非常に遠い光源は、すべての光線がほぼ**平行**に降り注ぎます。位置ではなく**方向のみ**で定義します。
 
 ```
-点光源:  各フラグメントへの方向が異なる     平行光源:  全フラグメントに同じ方向
-      ☀                                    ↓ ↓ ↓ ↓ ↓
-     ╱│╲                                   ↓ ↓ ↓ ↓ ↓
-    A  B  C                                A  B  C
+点光源: 各フラグメントへの方向が異なる 平行光源: 全フラグメントに同じ方向
+                                          ↓ ↓ ↓ ↓ ↓
+     ╱│╲ ↓ ↓ ↓ ↓ ↓
+    A B C A B C
 ```
 
 ### GLSL構造体と計算関数
 
 ```glsl
 struct DirLight {
-    vec3 direction;  // 光の方向（位置ではない！）
+    vec3 direction; // 光の方向（位置ではない！）
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
@@ -47,12 +47,12 @@ struct DirLight {
 vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir)
 {
     vec3 lightDir = normalize(-light.direction); // 符号反転！
-    float diff    = max(dot(normal, lightDir), 0.0);
+    float diff = max(dot(normal, lightDir), 0.0);
     vec3 reflectDir = reflect(-lightDir, normal);
-    float spec    = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
 
-    vec3 ambient  = light.ambient  * vec3(texture(material.diffuse, TexCoords));
-    vec3 diffuse  = light.diffuse  * diff * vec3(texture(material.diffuse, TexCoords));
+    vec3 ambient = light.ambient * vec3(texture(material.diffuse, TexCoords));
+    vec3 diffuse = light.diffuse * diff * vec3(texture(material.diffuse, TexCoords));
     vec3 specular = light.specular * spec * vec3(texture(material.specular, TexCoords));
     return (ambient + diffuse + specular);
 }
@@ -64,14 +64,14 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir)
 
 ```cpp
 lightingShader.setVec3("dirLight.direction", -0.2f, -1.0f, -0.3f);
-lightingShader.setVec3("dirLight.ambient",    0.05f, 0.05f, 0.05f);
-lightingShader.setVec3("dirLight.diffuse",    0.4f,  0.4f,  0.4f);
-lightingShader.setVec3("dirLight.specular",   0.5f,  0.5f,  0.5f);
+lightingShader.setVec3("dirLight.ambient", 0.05f, 0.05f, 0.05f);
+lightingShader.setVec3("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
+lightingShader.setVec3("dirLight.specular", 0.5f, 0.5f, 0.5f);
 ```
 
 ---
 
-## 📖 点光源（Point Light）と減衰
+## 点光源（Point Light）と減衰
 
 点光源は空間上の一点から全方向に光を放ちます。重要な特徴は**距離が離れるほど光が弱くなる**（減衰）ことです。
 
@@ -105,30 +105,30 @@ $$F_{att} = \frac{1.0}{K_c + K_l \cdot d + K_q \cdot d^2}$$
 
 ```glsl
 struct PointLight {
-    vec3  position;
+    vec3 position;
     float constant;
     float linear;
     float quadratic;
-    vec3  ambient;
-    vec3  diffuse;
-    vec3  specular;
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
 };
 
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 {
     vec3 lightDir = normalize(light.position - fragPos);
-    float diff    = max(dot(normal, lightDir), 0.0);
+    float diff = max(dot(normal, lightDir), 0.0);
     vec3 reflectDir = reflect(-lightDir, normal);
-    float spec    = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
 
     // 減衰
-    float distance    = length(light.position - fragPos);
+    float distance = length(light.position - fragPos);
     float attenuation = 1.0 / (light.constant
                               + light.linear * distance
                               + light.quadratic * distance * distance);
 
-    vec3 ambient  = light.ambient  * vec3(texture(material.diffuse, TexCoords));
-    vec3 diffuse  = light.diffuse  * diff * vec3(texture(material.diffuse, TexCoords));
+    vec3 ambient = light.ambient * vec3(texture(material.diffuse, TexCoords));
+    vec3 diffuse = light.diffuse * diff * vec3(texture(material.diffuse, TexCoords));
     vec3 specular = light.specular * spec * vec3(texture(material.specular, TexCoords));
     return (ambient + diffuse + specular) * attenuation;
 }
@@ -136,7 +136,7 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 
 ---
 
-## 📖 スポットライト（Spotlight）
+## スポットライト（Spotlight）
 
 スポットライトはある一点から**特定の方向にだけ**光を放つ円錐形の光源です。
 
@@ -154,8 +154,8 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 
 ```
 cos は角度が大きくなると小さくなる:
-cos(12.5°) = 0.9763  (内側: 明るい)
-cos(17.5°) = 0.9537  (外側: フェードアウト)
+cos(12.5°) = 0.9763 (内側: 明るい)
+cos(17.5°) = 0.9537 (外側: フェードアウト)
 cos(θ) > cos(cutOff) → 内側 → 照らす
 ```
 
@@ -171,37 +171,37 @@ $\theta$: フラグメントのcos値、$\phi$: 内側cutOffのcos値、$\gamma$
 
 ```glsl
 struct SpotLight {
-    vec3  position;
-    vec3  direction;
-    float cutOff;       // cos(12.5°) = 0.9763
-    float outerCutOff;  // cos(17.5°) = 0.9537
+    vec3 position;
+    vec3 direction;
+    float cutOff; // cos(12.5°) = 0.9763
+    float outerCutOff; // cos(17.5°) = 0.9537
     float constant;
     float linear;
     float quadratic;
-    vec3  ambient;
-    vec3  diffuse;
-    vec3  specular;
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
 };
 
 vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 {
     vec3 lightDir = normalize(light.position - fragPos);
-    float diff    = max(dot(normal, lightDir), 0.0);
+    float diff = max(dot(normal, lightDir), 0.0);
     vec3 reflectDir = reflect(-lightDir, normal);
-    float spec    = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
 
     // 減衰
-    float distance    = length(light.position - fragPos);
+    float distance = length(light.position - fragPos);
     float attenuation = 1.0 / (light.constant
                               + light.linear * distance
                               + light.quadratic * distance * distance);
     // スポットライト強度（ソフトエッジ）
-    float theta     = dot(lightDir, normalize(-light.direction));
-    float epsilon   = light.cutOff - light.outerCutOff;
+    float theta = dot(lightDir, normalize(-light.direction));
+    float epsilon = light.cutOff - light.outerCutOff;
     float intensity = clamp((theta - light.outerCutOff) / epsilon, 0.0, 1.0);
 
-    vec3 ambient  = light.ambient  * vec3(texture(material.diffuse, TexCoords));
-    vec3 diffuse  = light.diffuse  * diff * vec3(texture(material.diffuse, TexCoords));
+    vec3 ambient = light.ambient * vec3(texture(material.diffuse, TexCoords));
+    vec3 diffuse = light.diffuse * diff * vec3(texture(material.diffuse, TexCoords));
     vec3 specular = light.specular * spec * vec3(texture(material.specular, TexCoords));
     return (ambient + diffuse + specular) * attenuation * intensity;
 }
@@ -209,37 +209,37 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 
 ---
 
-## 📖 懐中電灯の実装
+## 懐中電灯の実装
 
 カメラの位置と方向をスポットライトに設定すれば、プレイヤーの懐中電灯になります：
 
 ```cpp
-lightingShader.setVec3("spotLight.position",  camera.Position);
+lightingShader.setVec3("spotLight.position", camera.Position);
 lightingShader.setVec3("spotLight.direction", camera.Front);
-lightingShader.setFloat("spotLight.cutOff",      glm::cos(glm::radians(12.5f)));
+lightingShader.setFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
 lightingShader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(17.5f)));
-lightingShader.setFloat("spotLight.constant",  1.0f);
-lightingShader.setFloat("spotLight.linear",    0.09f);
+lightingShader.setFloat("spotLight.constant", 1.0f);
+lightingShader.setFloat("spotLight.linear", 0.09f);
 lightingShader.setFloat("spotLight.quadratic", 0.032f);
-lightingShader.setVec3("spotLight.ambient",  0.0f, 0.0f, 0.0f);
-lightingShader.setVec3("spotLight.diffuse",  1.0f, 1.0f, 1.0f);
+lightingShader.setVec3("spotLight.ambient", 0.0f, 0.0f, 0.0f);
+lightingShader.setVec3("spotLight.diffuse", 1.0f, 1.0f, 1.0f);
 lightingShader.setVec3("spotLight.specular", 1.0f, 1.0f, 1.0f);
 ```
 
 ---
 
-## 📖 3種類の光源の比較
+## 3種類の光源の比較
 
 ```
 ┌─────────────┬──────────────┬──────────────┬─────────────────────┐
-│             │ 平行光源      │ 点光源        │ スポットライト       │
+│ │ 平行光源 │ 点光源 │ スポットライト │
 ├─────────────┼──────────────┼──────────────┼─────────────────────┤
-│ 位置        │ なし          │ あり          │ あり                │
-│ 方向        │ あり(固定)    │ なし(全方向)  │ あり(指向性)        │
-│ 減衰        │ なし          │ あり          │ あり                │
-│ カットオフ  │ なし          │ なし          │ あり(内+外)         │
-│ 計算コスト  │ 低い          │ 中程度        │ 高い                │
-│ 使用例      │ 太陽・月      │ 電球・ランタン│ 懐中電灯・舞台照明  │
+│ 位置 │ なし │ あり │ あり │
+│ 方向 │ あり(固定) │ なし(全方向) │ あり(指向性) │
+│ 減衰 │ なし │ あり │ あり │
+│ カットオフ │ なし │ なし │ あり(内+外) │
+│ 計算コスト │ 低い │ 中程度 │ 高い │
+│ 使用例 │ 太陽・月 │ 電球・ランタン│ 懐中電灯・舞台照明 │
 └─────────────┴──────────────┴──────────────┴─────────────────────┘
 ```
 
@@ -261,20 +261,20 @@ lightingShader.setVec3("spotLight.specular", 1.0f, 1.0f, 1.0f);
 
 ---
 
-## ✏️ ドリル問題
+## ドリル問題
 
 ### 問1: 構造体の穴埋め
 
 ```glsl
 struct DirLight {
-    vec3 ______;  // 光の方向
-    vec3 ______;  // 環境光
-    vec3 ______;  // 拡散光
-    vec3 ______;  // 鏡面光
+    vec3 ______; // 光の方向
+    vec3 ______; // 環境光
+    vec3 ______; // 拡散光
+    vec3 ______; // 鏡面光
 };
 ```
 
-<details><summary>📝 解答</summary>
+<details><summary> 解答</summary>
 
 `direction`, `ambient`, `diffuse`, `specular`。平行光源は position を持たず direction のみ。
 
@@ -284,7 +284,7 @@ struct DirLight {
 
 constant=1.0, linear=0.09, quadratic=0.032 のとき、距離 d=50 での $F_{att}$ を計算せよ。
 
-<details><summary>📝 解答</summary>
+<details><summary> 解答</summary>
 
 $$F_{att} = \frac{1.0}{1.0 + 0.09 \times 50 + 0.032 \times 2500} = \frac{1.0}{1.0 + 4.5 + 80.0} = \frac{1.0}{85.5} \approx 0.0117$$
 
@@ -296,7 +296,7 @@ $$F_{att} = \frac{1.0}{1.0 + 0.09 \times 50 + 0.032 \times 2500} = \frac{1.0}{1.
 
 cutOff=cos(12.5°)=0.9763, outerCutOff=cos(17.5°)=0.9537 で、フラグメントが15°の角度にある場合の intensity は？
 
-<details><summary>📝 解答</summary>
+<details><summary> 解答</summary>
 
 ```
 θ = cos(15°) = 0.9659
@@ -312,7 +312,7 @@ intensity = (0.9659 - 0.9537) / 0.0226 = 0.5398
 
 `direction = (0, -1, 0)`（上→下）のとき、`lightDir` を正しく計算するコードは？
 
-<details><summary>📝 解答</summary>
+<details><summary> 解答</summary>
 
 ```glsl
 vec3 lightDir = normalize(-dirLight.direction); // = (0, 1, 0) 上向き
@@ -329,7 +329,7 @@ vec3 lightDir = normalize(-dirLight.direction); // = (0, 1, 0) 上向き
 - B) linear は距離の二乗に比例する
 - C) quadratic は遠距離で急激に減衰させる
 
-<details><summary>📝 解答</summary>
+<details><summary> 解答</summary>
 
 **A) と C)** が正しい。B は誤り（linear は距離に比例する一次項、二乗は quadratic）。
 
@@ -343,10 +343,10 @@ lightingShader.setVec3("spotLight.______", camera.Front);
 lightingShader.setFloat("spotLight.cutOff", glm::cos(glm::radians(______)));
 ```
 
-<details><summary>📝 解答</summary>
+<details><summary> 解答</summary>
 
 ```cpp
-lightingShader.setVec3("spotLight.position",  camera.Position);
+lightingShader.setVec3("spotLight.position", camera.Position);
 lightingShader.setVec3("spotLight.direction", camera.Front);
 lightingShader.setFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
 ```
@@ -355,9 +355,9 @@ lightingShader.setFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
 
 ---
 
-## 🔨 実践課題
+## 実践課題
 
-### 課題1: 平行光源のシーン ⭐⭐
+### 課題1: 平行光源のシーン 
 
 10個の箱を配置し、`DirLight` と `CalcDirLight` で太陽に照らされたシーンを構築する。
 
@@ -366,7 +366,7 @@ lightingShader.setFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
 - [ ] 距離が離れても光の強さが変わらない（減衰なし）
 - [ ] ディフューズ/スペキュラーマップが正しく動作する
 
-### 課題2: 減衰する点光源 ⭐⭐
+### 課題2: 減衰する点光源 
 
 点光源を1つ配置し、減衰テーブルの値を変えて効果の違いを体験する。
 
@@ -375,7 +375,7 @@ lightingShader.setFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
 - [ ] quadratic を大きくすると遠くの箱が急に暗くなる
 - [ ] linear を大きくすると中距離の減衰が強まる
 
-### 課題3: 懐中電灯スポットライト ⭐⭐⭐
+### 課題3: 懐中電灯スポットライト 
 
 カメラ追従のソフトエッジスポットライトを暗い環境(ambient=0)で実装する。
 
@@ -387,6 +387,6 @@ lightingShader.setFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
 
 ---
 
-## 🔗 ナビゲーション
+## ナビゲーション
 
-⬅️ [ライティングマップ](./04-lighting-maps.md) | ➡️ [複数の光源 →](./06-multiple-lights.md)
+ [ライティングマップ](./04-lighting-maps.md) | [複数の光源 →](./06-multiple-lights.md)

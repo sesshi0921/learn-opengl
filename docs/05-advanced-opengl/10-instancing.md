@@ -1,23 +1,23 @@
-# 📘 インスタンシング（Instancing）
+# インスタンシング（Instancing）
 
 > **目標：** 同一メッシュを大量に描画する際のドローコールのオーバーヘッドを理解し、インスタンシングを使って数万〜数十万のオブジェクトを効率的に描画できるようになる。
 
 ---
 
-## 📖 ドローコールのオーバーヘッド問題
+## ドローコールのオーバーヘッド問題
 
 OpenGL でオブジェクトを描画するたびに `glDrawArrays` や `glDrawElements` を呼び出すと、CPU から GPU への**コマンド発行**が発生します。このコマンドには以下のような処理が含まれます：
 
 ```
 1回のドローコールで起こること:
 
-CPU 側                          │  GPU 側
+CPU 側 │ GPU 側
 ────────────────────────────────┼──────────────────────
-ユニフォーム設定                │
-バッファバインド                │
-ステート検証                    │
-ドライバがコマンドバッファ構築  │
-  ─── コマンド送信 ──────────▶  │  描画実行
+ユニフォーム設定 │
+バッファバインド │
+ステート検証 │
+ドライバがコマンドバッファ構築 │
+  ─── コマンド送信 ──────────▶ │ 描画実行
                                 │
 ```
 
@@ -26,20 +26,20 @@ CPU 側                          │  GPU 側
 ```
 通常描画 (1000個のオブジェクト):
   for (int i = 0; i < 1000; i++) {
-      setUniform(model[i]);   // ← 毎回 CPU→GPU 通信
-      glDrawArrays(...);      // ← 毎回ドローコール
+      setUniform(model[i]); // ← 毎回 CPU→GPU 通信
+      glDrawArrays(...); // ← 毎回ドローコール
   }
   合計: 1000回のドローコール → CPUがボトルネック
 
 インスタンシング:
-  setupInstanceData();          // ← 1回だけ
-  glDrawArraysInstanced(..., 1000);  // ← 1回のドローコール
+  setupInstanceData(); // ← 1回だけ
+  glDrawArraysInstanced(..., 1000); // ← 1回のドローコール
   合計: 1回のドローコール → GPU が効率的に処理
 ```
 
 ---
 
-## 📖 インスタンシングの基本概念
+## インスタンシングの基本概念
 
 インスタンシングは**1回のドローコールで同じメッシュを複数回描画**する技術です。各インスタンスの違い（位置、色、スケールなど）はシェーダー内で `gl_InstanceID` を使って区別します。
 
@@ -60,7 +60,7 @@ glDrawElementsInstanced(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0, instanceCo
 
 ---
 
-## 📖 gl_InstanceID ビルトイン変数
+## gl_InstanceID ビルトイン変数
 
 頂点シェーダー内で `gl_InstanceID` を参照すると、現在描画中のインスタンスの番号（0から始まる整数）が取得できます。
 
@@ -69,7 +69,7 @@ glDrawElementsInstanced(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0, instanceCo
 layout (location = 0) in vec2 aPos;
 layout (location = 1) in vec3 aColor;
 
-uniform vec2 offsets[100];  // 各インスタンスのオフセット
+uniform vec2 offsets[100]; // 各インスタンスのオフセット
 
 out vec3 fColor;
 
@@ -110,7 +110,7 @@ glDrawArraysInstanced(GL_TRIANGLES, 0, 6, 100);
 
 ---
 
-## 📖 インスタンス属性（Instanced Array）
+## インスタンス属性（Instanced Array）
 
 大量のインスタンス（数千〜数十万）に対応するには、インスタンスデータを**頂点属性**として設定し、`glVertexAttribDivisor` で更新頻度を制御します。
 
@@ -120,17 +120,17 @@ glDrawArraysInstanced(GL_TRIANGLES, 0, 6, 100);
 glVertexAttribDivisor(index, divisor);
 ```
 
-| divisor の値 | 意味                                  |
+| divisor の値 | 意味 |
 |-------------|---------------------------------------|
-| 0           | 頂点ごとに属性が進む（通常の頂点属性）|
-| 1           | インスタンスごとに属性が進む          |
-| 2           | 2インスタンスごとに属性が進む         |
-| N           | Nインスタンスごとに属性が進む         |
+| 0 | 頂点ごとに属性が進む（通常の頂点属性）|
+| 1 | インスタンスごとに属性が進む |
+| 2 | 2インスタンスごとに属性が進む |
+| N | Nインスタンスごとに属性が進む |
 
 ```
-divisor=0 (頂点属性):          divisor=1 (インスタンス属性):
- Instance0: v0→d[0] v1→d[1]   Instance0: v0→d[0] v1→d[0]
- Instance1: v0→d[0] v1→d[1]   Instance1: v0→d[1] v1→d[1]
+divisor=0 (頂点属性): divisor=1 (インスタンス属性):
+ Instance0: v0→d[0] v1→d[1] Instance0: v0→d[0] v1→d[0]
+ Instance1: v0→d[0] v1→d[1] Instance1: v0→d[1] v1→d[1]
 ```
 
 ### セットアップコード
@@ -145,7 +145,7 @@ glBufferData(GL_ARRAY_BUFFER, sizeof(vec2) * 100, &translations[0], GL_STATIC_DR
 // 頂点属性として設定（location = 2）
 glEnableVertexAttribArray(2);
 glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
-glVertexAttribDivisor(2, 1);  // ← インスタンスごとに更新
+glVertexAttribDivisor(2, 1); // ← インスタンスごとに更新
 ```
 
 対応するシェーダー：
@@ -154,7 +154,7 @@ glVertexAttribDivisor(2, 1);  // ← インスタンスごとに更新
 #version 330 core
 layout (location = 0) in vec2 aPos;
 layout (location = 1) in vec3 aColor;
-layout (location = 2) in vec2 aOffset;  // インスタンス属性
+layout (location = 2) in vec2 aOffset; // インスタンス属性
 
 out vec3 fColor;
 
@@ -166,7 +166,7 @@ void main() {
 
 ---
 
-## 📖 mat4 をインスタンス属性として渡す
+## mat4 をインスタンス属性として渡す
 
 各インスタンスに異なるモデル行列を適用したい場合、`mat4` を頂点属性として渡す必要があります。しかし頂点属性の最大サイズは `vec4` なので、**mat4 は4つの vec4 に分割**して設定します。
 
@@ -197,7 +197,7 @@ glVertexAttribDivisor(6, 1);
 layout (location = 0) in vec3 aPos;
 layout (location = 1) in vec3 aNormal;
 layout (location = 2) in vec2 aTexCoords;
-layout (location = 3) in mat4 aInstanceMatrix;  // location 3,4,5,6 を自動消費
+layout (location = 3) in mat4 aInstanceMatrix; // location 3,4,5,6 を自動消費
 
 uniform mat4 view;
 uniform mat4 projection;
@@ -211,7 +211,7 @@ mat4 は location 3〜6 の4列に分割され、stride は 64 bytes、各列の
 
 ---
 
-## 📖 実用例：小惑星フィールド
+## 実用例：小惑星フィールド
 
 数万個の小惑星を描画するシーンで、通常描画とインスタンシングのパフォーマンスを比較します。
 
@@ -233,7 +233,7 @@ for (unsigned int i = 0; i < amount; i++) {
     float displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
     float x = sin(angle) * radius + displacement;
     displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
-    float y = displacement * 0.4f;  // y軸は薄く
+    float y = displacement * 0.4f; // y軸は薄く
     displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
     float z = cos(angle) * radius + displacement;
     model = glm::translate(model, glm::vec3(x, y, z));
@@ -279,9 +279,9 @@ for (unsigned int i = 0; i < rock.meshes.size(); i++) {
 
 | 小惑星の数 | 通常描画 | インスタンシング |
 |-----------|----------|------------------|
-| 1,000     | ~120 FPS | ~800 FPS         |
-| 10,000    | ~15 FPS  | ~300 FPS         |
-| 100,000   | <1 FPS   | ~60 FPS          |
+| 1,000 | ~120 FPS | ~800 FPS |
+| 10,000 | ~15 FPS | ~300 FPS |
+| 100,000 | <1 FPS | ~60 FPS |
 
 ※ 環境により異なります
 
@@ -289,20 +289,20 @@ for (unsigned int i = 0; i < rock.meshes.size(); i++) {
 
 ## 💡 ポイントまとめ
 
-| 項目                            | 内容                                                       |
+| 項目 | 内容 |
 |---------------------------------|------------------------------------------------------------|
-| ドローコールの問題              | CPU→GPU 間通信がボトルネック、描画回数を減らすことが重要    |
-| glDrawArraysInstanced           | 同じメッシュを instanceCount 回描画する                    |
-| gl_InstanceID                   | 頂点シェーダー内で現在のインスタンス番号を取得（0始まり）  |
-| ユニフォーム配列方式            | 小規模向け（数百個まで）、ユニフォームサイズ制限あり       |
-| インスタンス属性方式            | 大規模向け（数万〜数十万）、VBO に格納                     |
-| glVertexAttribDivisor(idx, 1)   | 属性 idx をインスタンスごとに更新する                      |
-| mat4 の渡し方                   | 4つの連続する vec4 属性（4つの location を消費）           |
-| パフォーマンス効果              | 10万オブジェクトでも実用的な FPS を維持可能                |
+| ドローコールの問題 | CPU→GPU 間通信がボトルネック、描画回数を減らすことが重要 |
+| glDrawArraysInstanced | 同じメッシュを instanceCount 回描画する |
+| gl_InstanceID | 頂点シェーダー内で現在のインスタンス番号を取得（0始まり） |
+| ユニフォーム配列方式 | 小規模向け（数百個まで）、ユニフォームサイズ制限あり |
+| インスタンス属性方式 | 大規模向け（数万〜数十万）、VBO に格納 |
+| glVertexAttribDivisor(idx, 1) | 属性 idx をインスタンスごとに更新する |
+| mat4 の渡し方 | 4つの連続する vec4 属性（4つの location を消費） |
+| パフォーマンス効果 | 10万オブジェクトでも実用的な FPS を維持可能 |
 
 ---
 
-## ✏️ ドリル問題
+## ドリル問題
 
 ### 問題1（穴埋め）
 
@@ -311,10 +311,10 @@ for (unsigned int i = 0; i < rock.meshes.size(); i++) {
 ```cpp
 glEnableVertexAttribArray(2);
 glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
-______________________________;  // インスタンスごとに更新
+______________________________; // インスタンスごとに更新
 ```
 
-<details><summary>📝 解答</summary>
+<details><summary> 解答</summary>
 
 ```cpp
 glVertexAttribDivisor(2, 1);
@@ -335,7 +335,7 @@ glVertexAttribDivisor(2, 1);
 - C) 0, 2, 4, 6, 8, 10
 - D) 0, 0, 0, 1, 1, 1
 
-<details><summary>📝 解答</summary>
+<details><summary> 解答</summary>
 
 **A) 0, 0, 1, 1, 2, 2**
 
@@ -361,7 +361,7 @@ glVertexAttribPointer(4, ___, GL_FLOAT, GL_FALSE, ___ * vec4Size, (void*)(___));
 glVertexAttribDivisor(4, 1);
 ```
 
-<details><summary>📝 解答</summary>
+<details><summary> 解答</summary>
 
 ```cpp
 glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, 4 * vec4Size, (void*)(1 * vec4Size));
@@ -379,12 +379,12 @@ glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, 4 * vec4Size, (void*)(1 * vec4Si
 
 ユニフォーム配列方式とインスタンス属性方式の違いと、それぞれの適用場面を説明してください。
 
-<details><summary>📝 解答</summary>
+<details><summary> 解答</summary>
 
-| 方式               | データの場所       | サイズ制限            | 適用場面              |
+| 方式 | データの場所 | サイズ制限 | 適用場面 |
 |--------------------|--------------------|-----------------------|-----------------------|
-| ユニフォーム配列   | ユニフォームバッファ | `GL_MAX_UNIFORM_LOCATIONS` に制限（数百〜数千） | 小規模（数百個まで）  |
-| インスタンス属性   | VBO（頂点バッファ） | GPU メモリが許す限り  | 大規模（数万〜数十万）|
+| ユニフォーム配列 | ユニフォームバッファ | `GL_MAX_UNIFORM_LOCATIONS` に制限（数百〜数千） | 小規模（数百個まで） |
+| インスタンス属性 | VBO（頂点バッファ） | GPU メモリが許す限り | 大規模（数万〜数十万）|
 
 ユニフォーム配列方式は設定が簡単ですが、ループで `glUniform` を呼ぶオーバーヘッドがあります。インスタンス属性方式は初期設定がやや複雑ですが、一度 VBO にデータを格納すれば GPU が直接読み取るため高速です。
 
@@ -396,7 +396,7 @@ glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, 4 * vec4Size, (void*)(1 * vec4Si
 
 `mat4` を頂点属性として100,000個のインスタンスに渡す場合、インスタンスバッファに必要なメモリサイズは何バイトですか？
 
-<details><summary>📝 解答</summary>
+<details><summary> 解答</summary>
 
 ```
 mat4 = 4 × 4 × sizeof(float) = 16 × 4 = 64 バイト
@@ -425,14 +425,14 @@ void main() {
     gl_Position = vec4(aPos + aOffset, 0.0, 1.0);
     // インスタンスIDから色を生成（0～99のインスタンスを想定）
     fColor = vec3(
-        float(______) / 100.0,       // R: IDに比例
+        float(______) / 100.0, // R: IDに比例
         1.0 - float(______) / 100.0, // G: IDに反比例
-        0.5                           // B: 固定
+        0.5 // B: 固定
     );
 }
 ```
 
-<details><summary>📝 解答</summary>
+<details><summary> 解答</summary>
 
 ```glsl
 fColor = vec3(
@@ -448,9 +448,9 @@ fColor = vec3(
 
 ---
 
-## 🔨 実践課題
+## 実践課題
 
-### 課題1: 100個の四角形グリッド ⭐⭐
+### 課題1: 100個の四角形グリッド 
 
 NDC 空間 (-1〜1) に10×10のグリッド状に100個の四角形を描画してください。
 
@@ -463,7 +463,7 @@ NDC 空間 (-1〜1) に10×10のグリッド状に100個の四角形を描画し
 
 ---
 
-### 課題2: 草原シミュレーション ⭐⭐⭐
+### 課題2: 草原シミュレーション 
 
 地面テクスチャの上に、数千本の草（ビルボード四角形 + 草テクスチャ）をインスタンシングで描画してください。
 
@@ -476,7 +476,7 @@ NDC 空間 (-1〜1) に10×10のグリッド状に100個の四角形を描画し
 
 ---
 
-### 課題3: 小惑星リングの実装 ⭐⭐⭐⭐
+### 課題3: 小惑星リングの実装 
 
 中央に惑星モデル、周囲に数万個の小惑星モデルをリング状に配置するシーンを実装してください。
 
@@ -490,6 +490,6 @@ NDC 空間 (-1〜1) に10×10のグリッド状に100個の四角形を描画し
 
 ---
 
-## 🔗 ナビゲーション
+## ナビゲーション
 
-⬅️ [ジオメトリシェーダー](./09-geometry-shader.md) | ➡️ [アンチエイリアシング →](./11-anti-aliasing.md)
+ [ジオメトリシェーダー](./09-geometry-shader.md) | [アンチエイリアシング →](./11-anti-aliasing.md)

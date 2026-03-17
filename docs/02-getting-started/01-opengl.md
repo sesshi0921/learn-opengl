@@ -1,32 +1,32 @@
-# 📘 入門編 1：OpenGL とは
+# 入門編 1：OpenGL とは
 
 > **目標：** OpenGL の歴史・仕組み・拡張機能を理解する
 
 ---
 
-## 📖 OpenGL の歴史
+## OpenGL の歴史
 
 OpenGL は 1992 年、**Silicon Graphics Inc.（SGI）** によって公開されました。当時は高性能ワークステーション向けの API でしたが、現在では PC・モバイル・Web など幅広いプラットフォームで使われています。
 
 ```
-1992 年  OpenGL 1.0 リリース（SGI）
+1992 年 OpenGL 1.0 リリース（SGI）
    ↓
-2004 年  OpenGL 2.0（シェーダー言語 GLSL 導入）
+2004 年 OpenGL 2.0（シェーダー言語 GLSL 導入）
    ↓
-2008 年  OpenGL 3.0（コアプロファイル登場、古い機能を deprecated に）
+2008 年 OpenGL 3.0（コアプロファイル登場、古い機能を deprecated に）
    ↓
-2009 年  OpenGL 3.2（ジオメトリシェーダー）
+2009 年 OpenGL 3.2（ジオメトリシェーダー）
    ↓
-2010 年  OpenGL 4.0（テッセレーション）
+2010 年 OpenGL 4.0（テッセレーション）
    ↓
-2017 年  OpenGL 4.6（最新版、現在もメンテナンス中）
+2017 年 OpenGL 4.6（最新版、現在もメンテナンス中）
 ```
 
 > 💡 現在 OpenGL の仕様管理は **Khronos Group** が行っています。
 
 ---
 
-## 📖 コアプロファイルの重要性
+## コアプロファイルの重要性
 
 OpenGL 3.2 以降、2 つのプロファイルが存在します。
 
@@ -51,7 +51,7 @@ glDrawArrays(GL_TRIANGLES, 0, 3);
 
 ---
 
-## 📖 拡張機能（Extensions）
+## 拡張機能（Extensions）
 
 OpenGL は **拡張機能（Extension）** という仕組みで機能を追加できます。GPU メーカー（NVIDIA・AMD など）が独自機能を提供する際も拡張機能として提供します。
 
@@ -76,20 +76,20 @@ if (GL_ARB_extension_name) {
 
 ---
 
-## 📖 ステートマシンの詳細
+## ステートマシンの詳細
 
 OpenGL のすべての操作は **現在のコンテキスト（Context）** に対して行われます。
 
 ```
 OpenGL Context
 ┌──────────────────────────────────┐
-│ 現在バインドされているテクスチャ  │
-│ 現在バインドされているシェーダー  │
-│ 現在バインドされているバッファ    │
-│ ビューポートの設定               │
-│ ブレンディング設定               │
-│ 深度テスト設定                   │
-│ ...（数百の状態変数）            │
+│ 現在バインドされているテクスチャ │
+│ 現在バインドされているシェーダー │
+│ 現在バインドされているバッファ │
+│ ビューポートの設定 │
+│ ブレンディング設定 │
+│ 深度テスト設定 │
+│ ...（数百の状態変数） │
 └──────────────────────────────────┘
 ```
 
@@ -97,7 +97,7 @@ OpenGL Context
 
 ---
 
-## 📖 GLAD：関数ポインタの管理
+## GLAD：関数ポインタの管理
 
 OpenGL の関数は、実行時に GPU ドライバから **動的にロード** する必要があります。これを手動で行うのは非常に煩雑なため、**GLAD** というツールを使います。
 
@@ -132,7 +132,7 @@ PFNGLDRAWARRAYSPROC glDrawArrays =
 
 ---
 
-## ✏️ ドリル問題
+## ドリル問題
 
 ### 問題 1：穴埋め問題
 
@@ -142,7 +142,7 @@ PFNGLDRAWARRAYSPROC glDrawArrays =
 > NVIDIA 独自の拡張機能には【　④　】というプレフィックスがつく。
 
 <details>
-<summary>📝 解答</summary>
+<summary> 解答</summary>
 
 ① Khronos Group  
 ② コア（Core）  
@@ -163,7 +163,7 @@ OpenGL 2.0 で導入された重要な機能はどれか。
 - (D) コアプロファイル
 
 <details>
-<summary>📝 解答</summary>
+<summary> 解答</summary>
 
 **(B) シェーダー言語（GLSL）**
 
@@ -191,7 +191,7 @@ if (GL_ARB_extension_name) {
 2. なぜ `if` で確認してから使う必要があるか？
 
 <details>
-<summary>📝 解答</summary>
+<summary> 解答</summary>
 
 1. **Architecture Review Board** が承認した、安定した拡張機能であることを意味する
 2. 拡張機能はすべての GPU・ドライバで使えるとは限らないため、使用前に対応確認が必要
@@ -205,7 +205,7 @@ if (GL_ARB_extension_name) {
 コアプロファイルと互換プロファイルの違いを 2 点挙げなさい。
 
 <details>
-<summary>📝 解答</summary>
+<summary> 解答</summary>
 
 1. **機能の範囲：** 互換プロファイルは古い API（`glBegin/glEnd` など）が使えるが、コアプロファイルでは使用不可
 2. **パフォーマンス：** コアプロファイルは GPU の並列処理を最大限活用できる設計になっている
@@ -214,7 +214,7 @@ if (GL_ARB_extension_name) {
 
 ---
 
-## 🔨 実践課題
+## 実践課題
 
 ### 課題 1：GLAD ジェネレーターを使う
 
@@ -234,19 +234,19 @@ if (GL_ARB_extension_name) {
 ```cpp
 // ヒント：以下の関数を使う
 const GLubyte* version = glGetString(GL_VERSION);
-const GLubyte* vendor  = glGetString(GL_VENDOR);
+const GLubyte* vendor = glGetString(GL_VENDOR);
 const GLubyte* renderer = glGetString(GL_RENDERER);
 ```
 
 **期待される出力例：**
 ```
 OpenGL Version : 4.6.0 NVIDIA 528.49
-Vendor         : NVIDIA Corporation
-Renderer       : NVIDIA GeForce RTX 3070/PCIe/SSE2
+Vendor : NVIDIA Corporation
+Renderer : NVIDIA GeForce RTX 3070/PCIe/SSE2
 ```
 
 ---
 
-## 🔗 ナビゲーション
+## ナビゲーション
 
-⬅️ [はじめに](../01-introduction/README.md) | ➡️ [ウィンドウの作成 →](./02-creating-a-window.md)
+ [はじめに](../01-introduction/README.md) | [ウィンドウの作成 →](./02-creating-a-window.md)

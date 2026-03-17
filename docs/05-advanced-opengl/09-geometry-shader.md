@@ -1,16 +1,16 @@
-# 📘 ジオメトリシェーダー（Geometry Shader）
+# ジオメトリシェーダー（Geometry Shader）
 
 > **目標：** ジオメトリシェーダーの仕組みを理解し、プリミティブの生成・変形・可視化デバッグに活用できるようになる。
 
 ---
 
-## 📖 レンダリングパイプラインにおける位置づけ
+## レンダリングパイプラインにおける位置づけ
 
 ジオメトリシェーダーは、**頂点シェーダーの後**、**ラスタライザの前**に実行されるオプションのシェーダーステージです。頂点シェーダーが個々の頂点を処理するのに対し、ジオメトリシェーダーは**プリミティブ全体**（点・線・三角形）を受け取り、新しいプリミティブを生成・変形・破棄できます。
 
 ```
 パイプライン: 頂点データ → [頂点シェーダー] → [ジオメトリシェーダー] → [ラスタライザ] → [フラグメントシェーダー]
-                       (per-vertex)   (per-primitive)                (per-fragment)
+                       (per-vertex) (per-primitive) (per-fragment)
 
 ジオメトリシェーダーはプリミティブ1つを受け取り、0個以上のプリミティブを出力する
 ```
@@ -24,29 +24,29 @@
 
 ---
 
-## 📖 入出力プリミティブタイプ
+## 入出力プリミティブタイプ
 
 ### 入力（layout 修飾子で指定）
 
 ジオメトリシェーダーが受け取るプリミティブの種類を `layout(xxx) in;` で宣言します。
 
-| 入力タイプ               | 対応するドローモード                    | gl_in[] の要素数 |
+| 入力タイプ | 対応するドローモード | gl_in[] の要素数 |
 |--------------------------|----------------------------------------|------------------|
-| `points`                 | `GL_POINTS`                            | 1                |
-| `lines`                  | `GL_LINES`, `GL_LINE_STRIP`           | 2                |
-| `triangles`              | `GL_TRIANGLES`, `GL_TRIANGLE_STRIP`   | 3                |
-| `lines_adjacency`        | `GL_LINES_ADJACENCY`                  | 4                |
-| `triangles_adjacency`    | `GL_TRIANGLES_ADJACENCY`              | 6                |
+| `points` | `GL_POINTS` | 1 |
+| `lines` | `GL_LINES`, `GL_LINE_STRIP` | 2 |
+| `triangles` | `GL_TRIANGLES`, `GL_TRIANGLE_STRIP` | 3 |
+| `lines_adjacency` | `GL_LINES_ADJACENCY` | 4 |
+| `triangles_adjacency` | `GL_TRIANGLES_ADJACENCY` | 6 |
 
 ### 出力（layout 修飾子で指定）
 
 生成するプリミティブの種類と、1回の呼び出しで出力できる最大頂点数を指定します。
 
-| 出力タイプ         | 説明                                   |
+| 出力タイプ | 説明 |
 |--------------------|----------------------------------------|
-| `points`           | 点の集合                               |
-| `line_strip`       | 連続する線分                           |
-| `triangle_strip`   | 連続する三角形                         |
+| `points` | 点の集合 |
+| `line_strip` | 連続する線分 |
+| `triangle_strip` | 連続する三角形 |
 
 ```glsl
 // 入力: 三角形、出力: 三角形ストリップ（最大3頂点）
@@ -58,13 +58,13 @@ layout(triangle_strip, max_vertices = 3) out;
 
 ---
 
-## 📖 gl_in[] とビルトイン変数
+## gl_in[] とビルトイン変数
 
 `gl_in[]` 配列で入力頂点情報にアクセスします。
 
 ```glsl
 in gl_PerVertex {
-    vec4  gl_Position;
+    vec4 gl_Position;
     float gl_PointSize;
     float gl_ClipDistance[];
 } gl_in[];
@@ -74,7 +74,7 @@ in gl_PerVertex {
 
 ---
 
-## 📖 EmitVertex() と EndPrimitive()
+## EmitVertex() と EndPrimitive()
 
 ジオメトリシェーダーの核心となる2つの関数：
 
@@ -85,7 +85,7 @@ in gl_PerVertex {
 
 ---
 
-## 📖 基本例：パススルージオメトリシェーダー
+## 基本例：パススルージオメトリシェーダー
 
 まずは入力をそのまま出力するだけの最小限のジオメトリシェーダーです。
 
@@ -145,7 +145,7 @@ void main() {
 
 ---
 
-## 📖 応用例1：ポイントから家の形を生成
+## 応用例1：ポイントから家の形を生成
 
 1つの点から小さな家の形を描く例です。
 
@@ -160,23 +160,23 @@ void build_house(vec4 position) {
     float size = 0.1;
 
     // 左下
-    fColor = vec3(1.0, 0.0, 0.0);  // 赤
+    fColor = vec3(1.0, 0.0, 0.0); // 赤
     gl_Position = position + vec4(-size, -size, 0.0, 0.0);
     EmitVertex();
     // 右下
-    fColor = vec3(0.0, 1.0, 0.0);  // 緑
+    fColor = vec3(0.0, 1.0, 0.0); // 緑
     gl_Position = position + vec4( size, -size, 0.0, 0.0);
     EmitVertex();
     // 左上
-    fColor = vec3(0.0, 0.0, 1.0);  // 青
-    gl_Position = position + vec4(-size,  size, 0.0, 0.0);
+    fColor = vec3(0.0, 0.0, 1.0); // 青
+    gl_Position = position + vec4(-size, size, 0.0, 0.0);
     EmitVertex();
     // 右上
-    fColor = vec3(1.0, 1.0, 0.0);  // 黄
-    gl_Position = position + vec4( size,  size, 0.0, 0.0);
+    fColor = vec3(1.0, 1.0, 0.0); // 黄
+    gl_Position = position + vec4( size, size, 0.0, 0.0);
     EmitVertex();
     // 屋根の頂点
-    fColor = vec3(1.0, 1.0, 1.0);  // 白
+    fColor = vec3(1.0, 1.0, 1.0); // 白
     gl_Position = position + vec4( 0.0, size * 2.0, 0.0, 0.0);
     EmitVertex();
 
@@ -189,8 +189,8 @@ void main() {
 ```
 
 ```
-出力:    /\       頂点順序: 1(左下)→2(右下)→3(左上)→4(右上)→5(屋根)
-        /  \      三角形: 1-2-3, 2-3-4, 3-4-5
+出力: /\ 頂点順序: 1(左下)→2(右下)→3(左上)→4(右上)→5(屋根)
+        / \ 三角形: 1-2-3, 2-3-4, 3-4-5
        +----+
        | 家 |
        +----+
@@ -198,7 +198,7 @@ void main() {
 
 ---
 
-## 📖 応用例2：法線ベクトルの可視化
+## 応用例2：法線ベクトルの可視化
 
 3Dモデルのデバッグに非常に便利な手法です。各頂点から法線方向に短い線分を描画します。
 
@@ -227,9 +227,9 @@ void GenerateLine(int index) {
 }
 
 void main() {
-    GenerateLine(0);  // 頂点0の法線
-    GenerateLine(1);  // 頂点1の法線
-    GenerateLine(2);  // 頂点2の法線
+    GenerateLine(0); // 頂点0の法線
+    GenerateLine(1); // 頂点1の法線
+    GenerateLine(2); // 頂点2の法線
 }
 ```
 
@@ -237,7 +237,7 @@ void main() {
 
 ---
 
-## 📖 応用例3：爆発エフェクト
+## 応用例3：爆発エフェクト
 
 ```glsl
 #version 330 core
@@ -280,7 +280,7 @@ void main() {
 
 ---
 
-## 📖 C++ 側の設定
+## C++ 側の設定
 
 ジオメトリシェーダーをプログラムに追加するには、通常のシェーダーと同様に `glAttachShader` を使います。
 
@@ -293,7 +293,7 @@ glCompileShader(geometryShader);
 // プログラムにアタッチ
 unsigned int shaderProgram = glCreateProgram();
 glAttachShader(shaderProgram, vertexShader);
-glAttachShader(shaderProgram, geometryShader);   // ← ここで追加
+glAttachShader(shaderProgram, geometryShader); // ← ここで追加
 glAttachShader(shaderProgram, fragmentShader);
 glLinkProgram(shaderProgram);
 
@@ -305,7 +305,7 @@ glDeleteShader(fragmentShader);
 
 ---
 
-## 📖 パフォーマンスに関する注意
+## パフォーマンスに関する注意
 
 ジオメトリシェーダーは出力サイズが可変のため GPU の並列化が難しく、`max_vertices` を大きくするとドライバが最悪ケースでメモリを確保するなど、パフォーマンスコストが高くなりがちです。法線可視化やデバッグ用途では有効ですが、大量のジオメトリ生成にはテッセレーションシェーダーやインスタンシングを検討しましょう。
 
@@ -313,20 +313,20 @@ glDeleteShader(fragmentShader);
 
 ## 💡 ポイントまとめ
 
-| 項目                      | 内容                                                         |
+| 項目 | 内容 |
 |---------------------------|--------------------------------------------------------------|
-| パイプライン位置          | 頂点シェーダーの後、ラスタライザの前                         |
-| 処理単位                  | プリミティブ単位（1つの三角形、線、点）                     |
-| 入力宣言                  | `layout(triangles) in;` 等                                   |
-| 出力宣言                  | `layout(triangle_strip, max_vertices = N) out;`              |
-| EmitVertex / EndPrimitive | 頂点追加 / プリミティブ確定                                  |
-| ビルトイン入力            | `gl_in[].gl_Position` で入力頂点座標にアクセス              |
-| C++ 側のシェーダー種別    | `GL_GEOMETRY_SHADER`                                         |
-| パフォーマンス            | GPU 並列性が低下するため、用途を限定すべき                   |
+| パイプライン位置 | 頂点シェーダーの後、ラスタライザの前 |
+| 処理単位 | プリミティブ単位（1つの三角形、線、点） |
+| 入力宣言 | `layout(triangles) in;` 等 |
+| 出力宣言 | `layout(triangle_strip, max_vertices = N) out;` |
+| EmitVertex / EndPrimitive | 頂点追加 / プリミティブ確定 |
+| ビルトイン入力 | `gl_in[].gl_Position` で入力頂点座標にアクセス |
+| C++ 側のシェーダー種別 | `GL_GEOMETRY_SHADER` |
+| パフォーマンス | GPU 並列性が低下するため、用途を限定すべき |
 
 ---
 
-## ✏️ ドリル問題
+## ドリル問題
 
 ### 問題1（穴埋め）
 
@@ -337,7 +337,7 @@ layout(______) in;
 layout(______, max_vertices = ___) out;
 ```
 
-<details><summary>📝 解答</summary>
+<details><summary> 解答</summary>
 
 ```glsl
 layout(triangles) in;
@@ -359,7 +359,7 @@ layout(line_strip, max_vertices = 6) out;
 - C) 3
 - D) 6
 
-<details><summary>📝 解答</summary>
+<details><summary> 解答</summary>
 
 **C) 3**
 
@@ -381,7 +381,7 @@ vec4 Explode(vec4 position, vec3 normal) {
 }
 ```
 
-<details><summary>📝 解答</summary>
+<details><summary> 解答</summary>
 
 ```glsl
 vec3 direction = normal * ((sin(time) + 1.0) / 2.0) * magnitude;
@@ -398,7 +398,7 @@ return position + vec4(direction, 0.0);
 
 `EmitVertex()` と `EndPrimitive()` の違いを説明し、`triangle_strip` 出力で5回 `EmitVertex()` を呼んだ後に `EndPrimitive()` を呼んだ場合、何個の三角形が生成されるか答えてください。
 
-<details><summary>📝 解答</summary>
+<details><summary> 解答</summary>
 
 - **`EmitVertex()`**：現在設定されている gl_Position と out 変数で1頂点を出力ストリームに追加する
 - **`EndPrimitive()`**：それまでに追加された頂点群を1つのプリミティブ（ストリップ）として確定する
@@ -429,7 +429,7 @@ glAttachShader(program, fragmentShader);
 glLinkProgram(program);
 ```
 
-<details><summary>📝 解答</summary>
+<details><summary> 解答</summary>
 
 ```cpp
 unsigned int gShader = glCreateShader(GL_GEOMETRY_SHADER);
@@ -447,7 +447,7 @@ glAttachShader(program, gShader);
 
 `layout(lines) in;` と宣言したジオメトリシェーダーで `GL_LINE_STRIP` モードで4頂点（A-B-C-D）を描画した場合、ジオメトリシェーダーは何回呼び出されますか？
 
-<details><summary>📝 解答</summary>
+<details><summary> 解答</summary>
 
 **3回** 呼び出されます。
 
@@ -457,9 +457,9 @@ glAttachShader(program, gShader);
 
 ---
 
-## 🔨 実践課題
+## 実践課題
 
-### 課題1: ポイントスプライト生成 ⭐⭐
+### 課題1: ポイントスプライト生成 
 
 4つの点を `GL_POINTS` で描画し、ジオメトリシェーダーで各点を四角形（2つの三角形からなる `triangle_strip`）に展開してください。
 
@@ -471,7 +471,7 @@ glAttachShader(program, gShader);
 
 ---
 
-### 課題2: ワイヤーフレームオーバーレイ ⭐⭐⭐
+### 課題2: ワイヤーフレームオーバーレイ 
 
 3Dモデルの通常レンダリングの上に、ジオメトリシェーダーを使ってワイヤーフレームを重ねて表示してください。
 
@@ -483,7 +483,7 @@ glAttachShader(program, gShader);
 
 ---
 
-### 課題3: 爆発エフェクト付きモデル表示 ⭐⭐⭐⭐
+### 課題3: 爆発エフェクト付きモデル表示 
 
 モデルを読み込み、時間経過で三角形が法線方向に飛び散る爆発エフェクトを実装してください。
 
@@ -494,6 +494,6 @@ glAttachShader(program, gShader);
 - [ ] テクスチャ座標を維持し、飛び散る三角形にもテクスチャを表示
 - [ ] 移動量をユニフォームで調整可能にする
 
-## 🔗 ナビゲーション
+## ナビゲーション
 
-⬅️ [高度な GLSL](./08-advanced-glsl.md) | ➡️ [インスタンシング →](./10-instancing.md)
+ [高度な GLSL](./08-advanced-glsl.md) | [インスタンシング →](./10-instancing.md)

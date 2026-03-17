@@ -1,10 +1,10 @@
-# 📘 入門編 9：カメラ（Camera）
+# 入門編 9：カメラ（Camera）
 
 > **目標：** FPS スタイルのカメラシステムをゼロから実装する。マウスとキーボードで自由に 3D シーンを探索できるようにする
 
 ---
 
-## 📖 カメラとは
+## カメラとは
 
 OpenGL には「カメラ」というオブジェクトは存在しません。  
 カメラを表現するには **View 行列** でワールド全体を逆方向に動かします。
@@ -16,7 +16,7 @@ OpenGL には「カメラ」というオブジェクトは存在しません。
 
 ---
 
-## 📖 カメラのベクトル
+## カメラのベクトル
 
 カメラの姿勢は 3 つのベクトルで表現します。
 
@@ -36,39 +36,39 @@ OpenGL には「カメラ」というオブジェクトは存在しません。
 
 ```cpp
 // カメラの位置と向き
-glm::vec3 cameraPos   = glm::vec3(0.0f, 0.0f, 3.0f);
-glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);  // -Z が前方向
-glm::vec3 cameraUp    = glm::vec3(0.0f, 1.0f, 0.0f);   // Y 軸が上
+glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
+glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f); // -Z が前方向
+glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f); // Y 軸が上
 
 // lookAt で View 行列を生成
 glm::mat4 view = glm::lookAt(
     cameraPos,
-    cameraPos + cameraFront,  // 注視点 = カメラ位置 + 前方向
+    cameraPos + cameraFront, // 注視点 = カメラ位置 + 前方向
     cameraUp
 );
 ```
 
 ---
 
-## 📖 キーボード入力でカメラを移動
+## キーボード入力でカメラを移動
 
 ```cpp
-float cameraSpeed = 2.5f * deltaTime;  // フレームレート依存にしない！
+float cameraSpeed = 2.5f * deltaTime; // フレームレート依存にしない！
 
 void processInput(GLFWwindow* window) {
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        cameraPos += cameraSpeed * cameraFront;    // 前進
+        cameraPos += cameraSpeed * cameraFront; // 前進
 
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        cameraPos -= cameraSpeed * cameraFront;    // 後退
+        cameraPos -= cameraSpeed * cameraFront; // 後退
 
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
         cameraPos -= glm::normalize(
-            glm::cross(cameraFront, cameraUp)) * cameraSpeed;  // 左移動
+            glm::cross(cameraFront, cameraUp)) * cameraSpeed; // 左移動
 
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         cameraPos += glm::normalize(
-            glm::cross(cameraFront, cameraUp)) * cameraSpeed;  // 右移動
+            glm::cross(cameraFront, cameraUp)) * cameraSpeed; // 右移動
 }
 ```
 
@@ -76,12 +76,12 @@ void processInput(GLFWwindow* window) {
 
 ---
 
-## 📖 デルタタイム（Delta Time）
+## デルタタイム（Delta Time）
 
 フレームレートに依存しない移動速度を実現するための仕組みです。
 
 ```cpp
-float deltaTime = 0.0f;  // 前フレームからの経過時間
+float deltaTime = 0.0f; // 前フレームからの経過時間
 float lastFrame = 0.0f;
 
 // レンダリングループ内
@@ -101,20 +101,20 @@ float cameraSpeed = 2.5f * deltaTime;
 
 ---
 
-## 📖 マウスでカメラを回転（オイラー角）
+## マウスでカメラを回転（オイラー角）
 
 マウスの動きをカメラの回転（Yaw・Pitch）に変換します。
 
 ```
-Yaw（ヨー）  ：Y 軸周りの回転 → 左右を向く
+Yaw（ヨー） ：Y 軸周りの回転 → 左右を向く
 Pitch（ピッチ）：X 軸周りの回転 → 上下を向く
 Roll（ロール） ：Z 軸周りの回転 → FPS では通常使わない
 ```
 
 ```cpp
-float yaw   = -90.0f;  // X 軸方向（-Z 方向）を向くために -90 度
+float yaw = -90.0f; // X 軸方向（-Z 方向）を向くために -90 度
 float pitch = 0.0f;
-float sensitivity = 0.1f;  // マウス感度
+float sensitivity = 0.1f; // マウス感度
 
 // マウスコールバック
 void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
@@ -128,18 +128,18 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
     }
 
     float xoffset = xpos - lastX;
-    float yoffset = lastY - ypos;  // Y は上が正（スクリーンは逆）
+    float yoffset = lastY - ypos; // Y は上が正（スクリーンは逆）
     lastX = xpos;
     lastY = ypos;
 
     xoffset *= sensitivity;
     yoffset *= sensitivity;
 
-    yaw   += xoffset;
+    yaw += xoffset;
     pitch += yoffset;
 
     // Pitch の制限（真上・真下を向きすぎないように）
-    if (pitch >  89.0f) pitch =  89.0f;
+    if (pitch > 89.0f) pitch = 89.0f;
     if (pitch < -89.0f) pitch = -89.0f;
 
     // カメラ前方ベクトルを更新
@@ -153,7 +153,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
 
 ---
 
-## 📖 マウスカーソルを隠す
+## マウスカーソルを隠す
 
 FPS スタイルでは、マウスカーソルを隠してウィンドウ内に固定します。
 
@@ -167,14 +167,14 @@ glfwSetCursorPosCallback(window, mouse_callback);
 
 ---
 
-## 📖 スクロールでズーム（FOV 変更）
+## スクロールでズーム（FOV 変更）
 
 ```cpp
 float fov = 45.0f;
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
     fov -= (float)yoffset;
-    if (fov < 1.0f)  fov = 1.0f;
+    if (fov < 1.0f) fov = 1.0f;
     if (fov > 45.0f) fov = 45.0f;
 }
 
@@ -187,7 +187,7 @@ glm::mat4 projection = glm::perspective(
 
 ---
 
-## 📖 カメラクラス
+## カメラクラス
 
 ```cpp
 // Camera.h
@@ -220,9 +220,9 @@ public:
         : Front(glm::vec3(0, 0, -1)), MovementSpeed(2.5f),
           MouseSensitivity(0.1f), Zoom(45.0f) {
         Position = position;
-        WorldUp  = up;
-        Yaw      = yaw;
-        Pitch    = pitch;
+        WorldUp = up;
+        Yaw = yaw;
+        Pitch = pitch;
         updateCameraVectors();
     }
 
@@ -232,20 +232,20 @@ public:
 
     void ProcessKeyboard(Camera_Movement direction, float deltaTime) {
         float velocity = MovementSpeed * deltaTime;
-        if (direction == FORWARD)  Position += Front * velocity;
+        if (direction == FORWARD) Position += Front * velocity;
         if (direction == BACKWARD) Position -= Front * velocity;
-        if (direction == LEFT)     Position -= Right * velocity;
-        if (direction == RIGHT)    Position += Right * velocity;
+        if (direction == LEFT) Position -= Right * velocity;
+        if (direction == RIGHT) Position += Right * velocity;
     }
 
     void ProcessMouseMovement(float xoffset, float yoffset,
                                bool constrainPitch = true) {
         xoffset *= MouseSensitivity;
         yoffset *= MouseSensitivity;
-        Yaw   += xoffset;
+        Yaw += xoffset;
         Pitch += yoffset;
         if (constrainPitch) {
-            if (Pitch >  89.0f) Pitch =  89.0f;
+            if (Pitch > 89.0f) Pitch = 89.0f;
             if (Pitch < -89.0f) Pitch = -89.0f;
         }
         updateCameraVectors();
@@ -253,7 +253,7 @@ public:
 
     void ProcessMouseScroll(float yoffset) {
         Zoom -= yoffset;
-        if (Zoom < 1.0f)  Zoom = 1.0f;
+        if (Zoom < 1.0f) Zoom = 1.0f;
         if (Zoom > 45.0f) Zoom = 45.0f;
     }
 
@@ -265,7 +265,7 @@ private:
         front.z = sin(glm::radians(Yaw)) * cos(glm::radians(Pitch));
         Front = glm::normalize(front);
         Right = glm::normalize(glm::cross(Front, WorldUp));
-        Up    = glm::normalize(glm::cross(Right, Front));
+        Up = glm::normalize(glm::cross(Right, Front));
     }
 };
 
@@ -286,7 +286,7 @@ private:
 
 ---
 
-## ✏️ ドリル問題
+## ドリル問題
 
 ### 問題 1：デルタタイム穴埋め
 
@@ -304,7 +304,7 @@ float cameraSpeed = 2.5f * 【 ⑤ 】;
 ```
 
 <details>
-<summary>📝 解答</summary>
+<summary> 解答</summary>
 
 ① `deltaTime`  
 ② `lastFrame`  
@@ -326,7 +326,7 @@ float cameraSpeed = 2.5f * 【 ⑤ 】;
 | 右 | `cameraPos 【+/-】 normalize(cross(cameraFront, cameraUp)) * speed` |
 
 <details>
-<summary>📝 解答</summary>
+<summary> 解答</summary>
 
 | 方向 | 符号 |
 |------|------|
@@ -344,7 +344,7 @@ float cameraSpeed = 2.5f * 【 ⑤ 】;
 Pitch を -89 〜 +89 度に制限するのはなぜか？89 度を超えたらどうなるか？
 
 <details>
-<summary>📝 解答</summary>
+<summary> 解答</summary>
 
 Pitch が ±90 度以上になると、カメラが真上・真下を向き超えてしまう。  
 このとき `lookAt` の計算で Up ベクトルと Front ベクトルが平行になり、  
@@ -366,7 +366,7 @@ front.z = sin(radians(yaw)) * cos(radians(pitch));
 ```
 
 <details>
-<summary>📝 解答</summary>
+<summary> 解答</summary>
 
 - front.x = cos(0) × cos(0) = 1.0 × 1.0 = **1.0**
 - front.y = sin(0) = **0.0**
@@ -382,21 +382,21 @@ Yaw = -90 のとき：front.x = cos(-90) × 1 = 0, front.z = sin(-90) × 1 = -1
 
 ---
 
-## 🔨 実践課題
+## 実践課題
 
-### 課題 1：基本的なカメラ ⭐⭐
+### 課題 1：基本的なカメラ 
 
 WASD キーで移動できるカメラを実装しなさい。デルタタイムを使うこと。
 
-### 課題 2：マウス操作 ⭐⭐⭐
+### 課題 2：マウス操作 
 
 マウス移動でカメラを回転させる機能を追加しなさい。
 
-### 課題 3：Camera クラスを使う ⭐⭐⭐
+### 課題 3：Camera クラスを使う 
 
 本章の Camera クラスを別ファイルに実装し、main.cpp から利用できるようにしなさい。
 
-### 課題 4：高度なカメラ ⭐⭐⭐⭐
+### 課題 4：高度なカメラ 
 
 以下の追加機能を実装しなさい。
 - `Shift` キーで走る（速度 2 倍）
@@ -405,6 +405,6 @@ WASD キーで移動できるカメラを実装しなさい。デルタタイム
 
 ---
 
-## 🔗 ナビゲーション
+## ナビゲーション
 
-⬅️ [座標系](./08-coordinate-systems.md) | ➡️ [入門編まとめ →](./10-review.md)
+ [座標系](./08-coordinate-systems.md) | [入門編まとめ →](./10-review.md)
