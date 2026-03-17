@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LearnOpenGL 日本語ドリル技術書</title>
+  <meta name="description" content="learnopengl.com の完全日本語版ドリル教材">
+  <!-- docsify テーマ -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify-themeable@0/dist/css/theme-simple.css">
+  <!-- カスタムCSS -->
+  <link rel="stylesheet" href="style.css">
+  <!-- Prism: GLSL シンタックスハイライト -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1/themes/prism-tomorrow.min.css">
+</head>
+<body>
+  <div id="app">読み込み中...</div>
+  <script>
+    window.$docsify = {
+      name: '🎮 LearnOpenGL JP',
+      repo: '',
+      loadSidebar: true,
+      subMaxLevel: 0,
+      auto2top: true,
+      search: {
+        placeholder: '検索...',
+        noData: '結果がありません',
+        paths: 'auto',
+        depth: 3
+      },
+      pagination: {
+        previousText: '← 前のページ',
+        nextText: '次のページ →',
+        crossChapter: true,
+        crossChapterText: true
+      },
+      copyCode: {
+        buttonText: 'コピー',
+        errorText: 'エラー',
+        successText: 'コピーしました'
+      },
+      count: {
+        countable: true,
+        language: 'japanese'
+      },
+      progress: {
+        position: 'top',
+        color: 'var(--theme-color, #42b983)',
+        height: '3px'
+      },
+      themeColor: '#4a90d9',
+      homepage: 'README.md',
+      relativePath: true
+    };
+  </script>
+  <!-- docsify 本体 -->
+  <script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/docsify.min.js"></script>
+  <!-- プラグイン -->
+  <script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/plugins/search.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/docsify-pagination/dist/docsify-pagination.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/docsify-copy-code/dist/docsify-copy-code.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/docsify-count/dist/countable.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/docsify-progress@latest/dist/progress.min.js"></script>
+  <!-- Prism: シンタックスハイライト -->
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-c.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-cpp.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-glsl.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-cmake.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-bash.min.js"></script>
+</body>
+</html>

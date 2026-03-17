@@ -1,0 +1,14 @@
+{
+  "name": "learn-opengl-jp",
+  "version": "1.0.0",
+  "description": "LearnOpenGL 日本語ドリル技術書 — learnopengl.com を基にした完全日本語版ドリル教材",
+  "scripts": {
+    "dev": "docsify serve docs --port 3000",
+    "start": "docsify serve docs --port 3000"
+  },
+  "devDependencies": {
+    "docsify-cli": "^4.4.4"
+  },
+  "keywords": ["opengl", "learnopengl", "japanese", "tutorial", "drill"],
+  "license": "MIT"
+}
