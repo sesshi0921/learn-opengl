@@ -1,3 +1,12 @@
-# for node modules
-node_modules
+# for macOS
+.DS_Store
+
+# for visual studio code
+.vscode
+
+# for cmake build
+build
+**/output/**
+
+# for node modules in docs
 docs/node_modules
