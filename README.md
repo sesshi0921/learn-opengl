@@ -11,7 +11,7 @@
 
 1. リポジトリのクローン
     ```bash
-    git clone <repo-url>
+    git clone https://github.com/sesshi0921/learn-opengl.git
     ```
 2. クローンしたリポジトリの階層に移動
     ```bash
