@@ -47,22 +47,23 @@ add_library(glad STATIC "${glad_SOURCE_DIR}/src/glad.c")
 target_include_directories(glad PUBLIC "${glad_SOURCE_DIR}/includes")
 
 file(GLOB_RECURSE APP_SOURCES CONFIGURE_DEPENDS
-	"${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/training/src/**/*.cpp"
 )
 
+# 一時ファイルを除外
+list(FILTER APP_SOURCES EXCLUDE REGEX "tempCodeRunnerFile")
+
 if(NOT APP_SOURCES)
-	message(FATAL_ERROR "No .cpp files found under src/")
+	message(FATAL_ERROR "No .cpp files found under training/src/")
 endif()
 
 foreach(src_file IN LISTS APP_SOURCES)
-	file(RELATIVE_PATH rel_path "${CMAKE_CURRENT_SOURCE_DIR}/src" "${src_file}")
-	string(REPLACE "/" "_" target_name "${rel_path}")
-	string(REPLACE ".cpp" "" target_name "${target_name}")
+	get_filename_component(target_name "${src_file}" NAME_WE)
 
 	add_executable("${target_name}" "${src_file}")
 	target_include_directories("${target_name}" PRIVATE
-		"${CMAKE_CURRENT_SOURCE_DIR}/include"
-		"${CMAKE_CURRENT_SOURCE_DIR}/src"
+		"${CMAKE_CURRENT_SOURCE_DIR}/training/include"
+		"${CMAKE_CURRENT_SOURCE_DIR}/training/src"
 	)
 	target_link_libraries("${target_name}" PRIVATE glfw glad glm::glm OpenGL::GL)
 endforeach()
