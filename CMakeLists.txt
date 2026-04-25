@@ -62,8 +62,12 @@ foreach(src_file IN LISTS APP_SOURCES)
 
 	add_executable("${target_name}" "${src_file}")
 	target_include_directories("${target_name}" PRIVATE
+		"${CMAKE_CURRENT_SOURCE_DIR}"
 		"${CMAKE_CURRENT_SOURCE_DIR}/training/include"
 		"${CMAKE_CURRENT_SOURCE_DIR}/training/src"
+	)
+	target_precompile_headers("${target_name}" PRIVATE
+		"${CMAKE_CURRENT_SOURCE_DIR}/include/pch.h"
 	)
 	target_link_libraries("${target_name}" PRIVATE glfw glad glm::glm OpenGL::GL)
 endforeach()
